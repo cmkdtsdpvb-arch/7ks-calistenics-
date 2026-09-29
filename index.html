@@ -8,9 +8,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Font: Inter & Montserrat -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
-    <!-- Tailwind Config -->
+    
     <script>
         tailwind.config = {
             theme: {
@@ -42,10 +42,6 @@
         .purple-glow {
             box-shadow: 0 0 20px rgba(139, 92, 246, 0.25);
         }
-        .purple-glow-sm {
-            box-shadow: 0 0 10px rgba(139, 92, 246, 0.15);
-        }
-        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 4px;
         }
@@ -60,8 +56,8 @@
 </head>
 <body class="font-sans antialiased bg-brand-black text-white min-h-screen pb-24 select-none">
 
-    <!-- MODAL DE ONBOARDING / PERFIL -->
-    <div id="profileModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <!-- MODAL DE PERFIL / ONBOARDING -->
+    <div id="profileModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-brand-card border border-brand-purple/40 rounded-3xl p-6 w-full max-w-md purple-glow">
             <div class="text-center mb-6">
                 <div class="w-16 h-16 bg-brand-purple/20 border border-brand-purple rounded-2xl flex items-center justify-center mx-auto mb-3">
@@ -92,6 +88,47 @@
                     SALVAR PERFIL & COMEÇAR
                 </button>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL COMO EXECUTAR (VÍDEO E INSTRUÇÕES) -->
+    <div id="tutorialModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-brand-card border border-brand-purple/40 rounded-3xl w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden purple-glow">
+            <!-- Modal Header -->
+            <div class="p-4 border-b border-white/10 flex justify-between items-center bg-black/40">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-play text-brand-purple"></i>
+                    <h3 id="modalTitle" class="font-display font-bold text-base text-white">Como Executar</h3>
+                </div>
+                <button onclick="closeTutorialModal()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 active:scale-95">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content (Video & Steps) -->
+            <div class="p-4 overflow-y-auto space-y-4">
+                <!-- Video Container (Responsive 16:9 Iframe) -->
+                <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-black border border-white/10">
+                    <iframe id="modalVideoIframe" class="w-full h-full" src="" title="Vídeo de Demonstração" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+
+                <!-- Execução e Dicas -->
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-brand-purpleLight flex items-center gap-1.5">
+                        <i class="fa-solid fa-list-check"></i> Instruções de Execução
+                    </h4>
+                    <div id="modalInstructions" class="space-y-2 text-xs text-gray-300 leading-relaxed">
+                        <!-- Injetado por JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-3 border-t border-white/10 bg-black/40 text-center">
+                <button onclick="closeTutorialModal()" class="w-full bg-brand-purple/20 hover:bg-brand-purple/30 text-brand-purpleLight border border-brand-purple/40 font-bold py-2.5 rounded-xl text-xs transition">
+                    Entendi, Voltar ao Treino
+                </button>
+            </div>
         </div>
     </div>
 
@@ -256,9 +293,8 @@
     <!-- AUDIO SOM FIM DESCANSO -->
     <audio id="beepSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
-    <!-- JAVASCRIPT DO APP -->
     <script>
-        // ESTRUTURA DOS EXERCÍCIOS
+        // ESTRUTURA DOS EXERCÍCIOS COM VÍDEOS E INSTRUÇÕES
         const exercises = [
             {
                 id: 'flexoes',
@@ -267,7 +303,14 @@
                 sets: 5,
                 reps: '10 reps',
                 targets: 'Peitoral, tríceps, ombros (deltoide anterior) e core.',
-                img: 'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?q=80&w=600&auto=format&fit=crop'
+                img: 'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?q=80&w=600&auto=format&fit=crop',
+                youtubeId: 'IODxDxX7oi4',
+                steps: [
+                    'Mantenha as mãos ligeiramente mais largas que a largura dos ombros.',
+                    'Mantenha o corpo reto como uma prancha, ativando glúteos e abdômen.',
+                    'Desça o peitoral até quase tocar o chão com os cotovelos apontando a 45 graus.',
+                    'Empurre o chão de volta mantendo o alinhamento corporal.'
+                ]
             },
             {
                 id: 'barra_fixa',
@@ -276,7 +319,14 @@
                 sets: 5,
                 reps: '5 reps',
                 targets: 'Latíssimo do dorso, bíceps, antebraços, trapézio e romboides.',
-                img: 'https://images.unsplash.com/photo-1598971457999-ca4ef48a9a71?q=80&w=600&auto=format&fit=crop'
+                img: 'https://images.unsplash.com/photo-1598971457999-ca4ef48a9a71?q=80&w=600&auto=format&fit=crop',
+                youtubeId: 'eGo4IYlbE5g',
+                steps: [
+                    'Segure a barra com pegada pronada (palmas para a frente) na largura dos ombros.',
+                    'Inicie a puxada ativando as escápulas (ombros para baixo e para trás).',
+                    'Puxe o corpo até o queixo ultrapassar a linha da barra.',
+                    'Desça de forma controlada até estender completamente os braços.'
+                ]
             },
             {
                 id: 'barra_australiana',
@@ -285,7 +335,14 @@
                 sets: 5,
                 reps: '5 reps',
                 targets: 'Costas (parte média), bíceps, antebraços e deltoide posterior.',
-                img: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=600&auto=format&fit=crop'
+                img: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=600&auto=format&fit=crop',
+                youtubeId: 'hXTc1mDnC34',
+                steps: [
+                    'Posicione-se embaixo de uma barra baixa ou argolas com o corpo inclinado.',
+                    'Mantenha calcanhares no chão e corpo reto.',
+                    'Puxe o peitoral em direção à barra espremendo as escápulas.',
+                    'Retorne estendendo os cotovelos de forma controlada.'
+                ]
             },
             {
                 id: 'abdominais',
@@ -294,7 +351,14 @@
                 sets: 5,
                 reps: '5 reps',
                 targets: 'Reto abdominal e auxílio no fortalecimento do core.',
-                img: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=600&auto=format&fit=crop'
+                img: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=600&auto=format&fit=crop',
+                youtubeId: '1fbU_MkV7NE',
+                steps: [
+                    'Deite-se de costas com os joelhos dobrados e pés firmes no chão.',
+                    'Mantenha as mãos atrás da cabeça sem forçar o pescoço.',
+                    'Contraia o abdômen elevando os ombros do solo.',
+                    'Exhale ao subir e desça devagar inspirando.'
+                ]
             },
             {
                 id: 'prancha',
@@ -303,7 +367,14 @@
                 sets: 5,
                 reps: '30-60s',
                 targets: 'Core completo (reto abdominal, transverso, oblíquos e lombar), glúteos e ombros.',
-                img: 'https://images.unsplash.com/photo-1566241142559-40e1dab266c6?q=80&w=600&auto=format&fit=crop'
+                img: 'https://images.unsplash.com/photo-1566241142559-40e1dab266c6?q=80&w=600&auto=format&fit=crop',
+                youtubeId: 'ASdvN_XEl_c',
+                steps: [
+                    'Apoie os antebraços e as pontas dos pés no chão.',
+                    'Mantenha os cotovelos alinhados com a linha dos ombros.',
+                    'Mantenha a cabeça, coluna e quadril em uma linha reta sem selar o quadril.',
+                    'Contraia fortemente o abdômen e glúteos durante o tempo determinado.'
+                ]
             },
             {
                 id: 'agachamentos',
@@ -312,7 +383,14 @@
                 sets: 5,
                 reps: '10 reps',
                 targets: 'Quadríceps, glúteos, posteriores da coxa e core.',
-                img: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=600&auto=format&fit=crop'
+                img: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=600&auto=format&fit=crop',
+                youtubeId: 'aclHkVaku9U',
+                steps: [
+                    'Pés afastados na largura dos ombros com pontas ligeiramente para fora.',
+                    'Mantenha o peitoral aberto e coluna neutra.',
+                    'Simule sentar em uma cadeira invisível jogando o quadril para trás e para baixo.',
+                    'Desça até as coxas ficarem paralelas ao chão e suba empurrando pelos calcanhares.'
+                ]
             },
             {
                 id: 'calcanhar',
@@ -321,7 +399,14 @@
                 sets: 5,
                 reps: '10 reps',
                 targets: 'Panturrilhas (gastrocnêmio e sóleo) e estabilidade do tornozelo.',
-                img: 'https://images.unsplash.com/photo-1434682881908-b43d0467b798?q=80&w=600&auto=format&fit=crop'
+                img: 'https://images.unsplash.com/photo-1434682881908-b43d0467b798?q=80&w=600&auto=format&fit=crop',
+                youtubeId: 'gwLzBJYoWlI',
+                steps: [
+                    'Fique em pé com os pés alinhados. Se necessário, apoie as mãos em uma parede.',
+                    'Eleve o corpo empurrando a ponta dos pés o mais alto possível.',
+                    'Segure 1 segundo no topo sentindo a contração na panturrilha.',
+                    'Desça suavemente até encostar os calcanhares no chão.'
+                ]
             },
             {
                 id: 'elevacao_lateral',
@@ -330,7 +415,14 @@
                 sets: 5,
                 reps: '5 reps',
                 targets: 'Deltoide lateral, trapézio superior e manguito rotador.',
-                img: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=600&auto=format&fit=crop'
+                img: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=600&auto=format&fit=crop',
+                youtubeId: '3VcKaXpzqRo',
+                steps: [
+                    'Fique em pé segurando o peso/garrafas d\'água ao lado do corpo.',
+                    'Mantenha os cotovelos levemente flexionados.',
+                    'Eleve os braços para os lados até a altura dos ombros.',
+                    'Desça o peso de forma controlada sem deixar cair de uma vez.'
+                ]
             }
         ];
 
@@ -432,6 +524,11 @@
                                 <h3 class="font-display font-extrabold text-lg text-white leading-snug">${ex.name}</h3>
                                 <p class="text-xs font-semibold text-brand-purpleLight">${ex.meta}</p>
                             </div>
+                            <!-- BOTÃO COMO EXECUTAR -->
+                            <button onclick="openTutorialModal('${ex.id}')" class="bg-brand-purple/80 hover:bg-brand-purple text-white text-[11px] font-bold px-3 py-1.5 rounded-xl border border-brand-purpleLight/50 flex items-center gap-1.5 shadow-md active:scale-95 transition">
+                                <i class="fa-solid fa-circle-play text-xs"></i>
+                                Como executar
+                            </button>
                         </div>
                     </div>
                     <div class="p-3.5 space-y-3">
@@ -445,6 +542,39 @@
                 `;
                 container.appendChild(card);
             });
+        }
+
+        // TUTORIAL MODAL (COMO EXECUTAR)
+        function openTutorialModal(exerciseId) {
+            const ex = exercises.find(e => e.id === exerciseId);
+            if (!ex) return;
+
+            document.getElementById('modalTitle').textContent = `Como Executar: ${ex.name}`;
+            
+            // Set YouTube embed URL
+            const iframe = document.getElementById('modalVideoIframe');
+            iframe.src = `https://www.youtube.com/embed/${ex.youtubeId}?autoplay=1&rel=0`;
+
+            // Populate steps
+            const container = document.getElementById('modalInstructions');
+            container.innerHTML = '';
+            ex.steps.forEach((step, idx) => {
+                const stepEl = document.createElement('div');
+                stepEl.className = "flex items-start gap-2 bg-black/40 p-2.5 rounded-xl border border-white/5";
+                stepEl.innerHTML = `
+                    <span class="w-5 h-5 rounded-full bg-brand-purple/20 text-brand-purpleLight font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">${idx + 1}</span>
+                    <p class="text-xs text-gray-300 leading-snug">${step}</p>
+                `;
+                container.appendChild(stepEl);
+            });
+
+            document.getElementById('tutorialModal').classList.remove('hidden');
+        }
+
+        function closeTutorialModal() {
+            document.getElementById('tutorialModal').classList.add('hidden');
+            // Clear iframe src to stop video audio
+            document.getElementById('modalVideoIframe').src = '';
         }
 
         // TOGGLE DA SÉRIE E TIMER
