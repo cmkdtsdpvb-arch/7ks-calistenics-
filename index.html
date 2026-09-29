@@ -8,9 +8,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
+    <!-- Google Font: Inter & Montserrat -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
-    
+    <!-- Tailwind Config -->
     <script>
         tailwind.config = {
             theme: {
@@ -42,6 +42,7 @@
         .purple-glow {
             box-shadow: 0 0 20px rgba(139, 92, 246, 0.25);
         }
+        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 4px;
         }
@@ -56,78 +57,89 @@
 </head>
 <body class="font-sans antialiased bg-brand-black text-white min-h-screen pb-24 select-none">
 
-    <!-- MODAL DE PERFIL / ONBOARDING -->
-    <div id="profileModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <!-- MODAL DE AUTENTICAÇÃO / PERFIL -->
+    <div id="authModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-brand-card border border-brand-purple/40 rounded-3xl p-6 w-full max-w-md purple-glow">
             <div class="text-center mb-6">
                 <div class="w-16 h-16 bg-brand-purple/20 border border-brand-purple rounded-2xl flex items-center justify-center mx-auto mb-3">
-                    <i class="fa-solid fa-user-plus text-brand-purple text-2xl"></i>
+                    <i class="fa-solid fa-dumbbell text-brand-purple text-2xl"></i>
                 </div>
-                <h2 class="text-2xl font-display font-black text-white">BEM-VINDO AO <span class="text-brand-purple">7K'S</span></h2>
-                <p class="text-xs text-brand-textMuted mt-1">Configure o seu perfil para começar os treinos</p>
+                <h2 class="text-2xl font-display font-black text-white">7K'S <span class="text-brand-purple">CALISTENICS</span></h2>
+                <p class="text-xs text-brand-textMuted mt-1">Seu personal virtual 100% gratuito!</p>
             </div>
 
-            <form id="profileForm" onsubmit="saveProfile(event)" class="space-y-4">
+            <!-- Abas Login / Cadastro -->
+            <div class="flex bg-black/50 p-1 rounded-xl mb-4 border border-white/5">
+                <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-2 text-xs font-bold rounded-lg bg-brand-purple text-white transition">Entrar</button>
+                <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="flex-1 py-2 text-xs font-bold rounded-lg text-brand-textMuted transition">Criar Conta</button>
+            </div>
+
+            <!-- FORMULÁRIO DE LOGIN -->
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-brand-textMuted mb-1">Apelido / Nome</label>
-                    <input type="text" id="inputNickname" required placeholder="Ex: Atleta 7k" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple transition">
+                    <label class="block text-[10px] font-semibold uppercase tracking-wider text-brand-textMuted mb-1">Apelido ou E-mail</label>
+                    <input type="text" id="loginUser" required placeholder="Digite seu apelido" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple transition text-sm">
                 </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-brand-textMuted mb-1">Peso (kg)</label>
-                        <input type="number" step="0.1" id="inputWeight" required placeholder="Ex: 75.5" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple transition">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-brand-textMuted mb-1">Altura (cm)</label>
-                        <input type="number" id="inputHeight" required placeholder="Ex: 175" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple transition">
-                    </div>
+                <div>
+                    <label class="block text-[10px] font-semibold uppercase tracking-wider text-brand-textMuted mb-1">Senha</label>
+                    <input type="password" id="loginPass" required placeholder="••••••••" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple transition text-sm">
                 </div>
-
-                <button type="submit" class="w-full mt-4 bg-brand-purple hover:bg-brand-purpleDark active:scale-95 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-brand-purple/30">
-                    SALVAR PERFIL & COMEÇAR
+                <button type="submit" class="w-full mt-2 bg-brand-purple hover:bg-brand-purpleDark active:scale-95 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-brand-purple/30 text-sm">
+                    ENTRAR NA CONTA
                 </button>
             </form>
+
+            <!-- FORMULÁRIO DE CADASTRO -->
+            <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-3 hidden">
+                <div>
+                    <label class="block text-[10px] font-semibold uppercase tracking-wider text-brand-textMuted mb-1">Apelido / Nome</label>
+                    <input type="text" id="regNick" required placeholder="Ex: Atleta 7k" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple transition text-sm">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-semibold uppercase tracking-wider text-brand-textMuted mb-1">Senha</label>
+                    <input type="password" id="regPass" required placeholder="Crie uma senha" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple transition text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-semibold uppercase tracking-wider text-brand-textMuted mb-1">Peso (kg)</label>
+                        <input type="number" step="0.1" id="regWeight" required placeholder="Ex: 75.5" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple transition text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-semibold uppercase tracking-wider text-brand-textMuted mb-1">Altura (cm)</label>
+                        <input type="number" id="regHeight" required placeholder="Ex: 175" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple transition text-sm">
+                    </div>
+                </div>
+                <button type="submit" class="w-full mt-2 bg-brand-purple hover:bg-brand-purpleDark active:scale-95 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-brand-purple/30 text-sm">
+                    CRIAR CONTA & COMEÇAR
+                </button>
+            </form>
+
+            <button onclick="guestLogin()" class="w-full text-center text-xs text-brand-textMuted hover:text-white mt-4 flex items-center justify-center gap-1">
+                <i class="fa-solid fa-user-ninja"></i> Continuar sem cadastro (Modo Convidado)
+            </button>
         </div>
     </div>
 
-    <!-- MODAL COMO EXECUTAR (VÍDEO E INSTRUÇÕES) -->
-    <div id="tutorialModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-brand-card border border-brand-purple/40 rounded-3xl w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden purple-glow">
-            <!-- Modal Header -->
-            <div class="p-4 border-b border-white/10 flex justify-between items-center bg-black/40">
-                <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-circle-play text-brand-purple"></i>
-                    <h3 id="modalTitle" class="font-display font-bold text-base text-white">Como Executar</h3>
-                </div>
-                <button onclick="closeTutorialModal()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 active:scale-95">
-                    <i class="fa-solid fa-xmark text-sm"></i>
+    <!-- MODAL "COMO EXECUTA" (VÍDEO E PASSO A PASSO) -->
+    <div id="exerciseModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-brand-card border border-brand-purple/40 rounded-3xl p-5 w-full max-w-md purple-glow max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-3">
+                <h3 id="modalExerciseTitle" class="font-display font-extrabold text-lg text-white">Como Executar</h3>
+                <button onclick="closeExerciseModal()" class="w-8 h-8 rounded-full bg-black/50 border border-white/10 text-brand-textMuted hover:text-white flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <!-- Modal Content (Video & Steps) -->
-            <div class="p-4 overflow-y-auto space-y-4">
-                <!-- Video Container (Responsive 16:9 Iframe) -->
-                <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-black border border-white/10">
-                    <iframe id="modalVideoIframe" class="w-full h-full" src="" title="Vídeo de Demonstração" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                </div>
-
-                <!-- Execução e Dicas -->
-                <div class="space-y-3">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-brand-purpleLight flex items-center gap-1.5">
-                        <i class="fa-solid fa-list-check"></i> Instruções de Execução
-                    </h4>
-                    <div id="modalInstructions" class="space-y-2 text-xs text-gray-300 leading-relaxed">
-                        <!-- Injetado por JS -->
-                    </div>
-                </div>
+            <!-- PLAYER VÍDEO -->
+            <div class="relative w-full aspect-video rounded-2xl overflow-hidden border border-white/10 bg-black mb-4">
+                <iframe id="modalVideoFrame" class="w-full h-full" src="" title="Vídeo de execução" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
 
-            <!-- Modal Footer -->
-            <div class="p-3 border-t border-white/10 bg-black/40 text-center">
-                <button onclick="closeTutorialModal()" class="w-full bg-brand-purple/20 hover:bg-brand-purple/30 text-brand-purpleLight border border-brand-purple/40 font-bold py-2.5 rounded-xl text-xs transition">
-                    Entendi, Voltar ao Treino
-                </button>
+            <div class="space-y-3">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-brand-purpleLight"><i class="fa-solid fa-list-check mr-1"></i> Passo a Passo Correto:</h4>
+                <ul id="modalStepsList" class="text-xs text-brand-textMuted space-y-2 list-disc pl-4">
+                    <!-- Preenchido via JS -->
+                </ul>
             </div>
         </div>
     </div>
@@ -144,9 +156,11 @@
                     <p id="userWelcome" class="text-xs text-brand-textMuted">Bora treinar!</p>
                 </div>
             </div>
-            <button onclick="openProfileEdit()" class="text-xs bg-brand-card hover:bg-brand-purple/20 border border-white/10 px-3 py-1.5 rounded-lg text-brand-purpleLight flex items-center gap-1.5">
-                <i class="fa-solid fa-user-gear"></i> Perfil
-            </button>
+            <div class="flex items-center gap-2">
+                <button onclick="logout()" title="Sair da conta" class="text-xs bg-red-500/10 border border-red-500/20 px-2.5 py-1.5 rounded-lg text-red-400 hover:bg-red-500/20">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -228,9 +242,6 @@
                             <p class="text-xs text-brand-textMuted">Membro 7k's Calistenics</p>
                         </div>
                     </div>
-                    <button onclick="openProfileEdit()" class="text-xs bg-black/40 border border-white/10 px-2.5 py-1.5 rounded-lg text-brand-textMuted hover:text-white">
-                        <i class="fa-solid fa-pen-to-square"></i> Editar
-                    </button>
                 </div>
 
                 <div class="grid grid-cols-3 gap-2 text-center">
@@ -294,22 +305,21 @@
     <audio id="beepSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
     <script>
-        // ESTRUTURA DOS EXERCÍCIOS COM VÍDEOS E INSTRUÇÕES
+        // LISTA DE EXERCÍCIOS
         const exercises = [
             {
                 id: 'flexoes',
                 name: 'Flexões',
                 meta: '5×10 (50 repetições)',
                 sets: 5,
-                reps: '10 reps',
                 targets: 'Peitoral, tríceps, ombros (deltoide anterior) e core.',
                 img: 'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?q=80&w=600&auto=format&fit=crop',
-                youtubeId: 'IODxDxX7oi4',
+                videoUrl: 'https://www.youtube.com/embed/iod3sACpL4w',
                 steps: [
-                    'Mantenha as mãos ligeiramente mais largas que a largura dos ombros.',
-                    'Mantenha o corpo reto como uma prancha, ativando glúteos e abdômen.',
-                    'Desça o peitoral até quase tocar o chão com os cotovelos apontando a 45 graus.',
-                    'Empurre o chão de volta mantendo o alinhamento corporal.'
+                    'Mantenha as mãos alinhadas na largura dos ombros.',
+                    'Mantenha o corpo reto como uma prancha, contraindo o abdômen e glúteos.',
+                    'Desça o peito até quase tocar o chão mantendo os cotovelos a 45 graus.',
+                    'Empurre o chão até estender os braços completamente.'
                 ]
             },
             {
@@ -317,15 +327,14 @@
                 name: 'Barra Fixa',
                 meta: '5×5 (25 repetições)',
                 sets: 5,
-                reps: '5 reps',
                 targets: 'Latíssimo do dorso, bíceps, antebraços, trapézio e romboides.',
                 img: 'https://images.unsplash.com/photo-1598971457999-ca4ef48a9a71?q=80&w=600&auto=format&fit=crop',
-                youtubeId: 'eGo4IYlbE5g',
+                videoUrl: 'https://www.youtube.com/embed/eGo4IYlbE5g',
                 steps: [
-                    'Segure a barra com pegada pronada (palmas para a frente) na largura dos ombros.',
-                    'Inicie a puxada ativando as escápulas (ombros para baixo e para trás).',
-                    'Puxe o corpo até o queixo ultrapassar a linha da barra.',
-                    'Desça de forma controlada até estender completamente os braços.'
+                    'Segure a barra com pegada pronada (palmas para a frente).',
+                    'Inicie o movimento puxando as escápulas para baixo.',
+                    'Puxe o corpo para cima até o queixo passar da barra.',
+                    'Desça de forma controlada até estender totalmente os braços.'
                 ]
             },
             {
@@ -333,15 +342,14 @@
                 name: 'Barra Australiana',
                 meta: '5×5 (25 repetições)',
                 sets: 5,
-                reps: '5 reps',
                 targets: 'Costas (parte média), bíceps, antebraços e deltoide posterior.',
                 img: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=600&auto=format&fit=crop',
-                youtubeId: 'hXTc1mDnC34',
+                videoUrl: 'https://www.youtube.com/embed/G2eJ-A_xPUI',
                 steps: [
-                    'Posicione-se embaixo de uma barra baixa ou argolas com o corpo inclinado.',
-                    'Mantenha calcanhares no chão e corpo reto.',
-                    'Puxe o peitoral em direção à barra espremendo as escápulas.',
-                    'Retorne estendendo os cotovelos de forma controlada.'
+                    'Ajuste uma barra baixa na altura da cintura.',
+                    'Posicione-se embaixo da barra com os calcanhares apoiados no chão.',
+                    'Puxe o peito em direção à barra mantendo o corpo alinhado.',
+                    'Retorne devagar sem soltar o corpo.'
                 ]
             },
             {
@@ -349,15 +357,14 @@
                 name: 'Abdominais',
                 meta: '5×5 (25 repetições)',
                 sets: 5,
-                reps: '5 reps',
                 targets: 'Reto abdominal e auxílio no fortalecimento do core.',
                 img: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=600&auto=format&fit=crop',
-                youtubeId: '1fbU_MkV7NE',
+                videoUrl: 'https://www.youtube.com/embed/Xyd_fa5zoEU',
                 steps: [
-                    'Deite-se de costas com os joelhos dobrados e pés firmes no chão.',
-                    'Mantenha as mãos atrás da cabeça sem forçar o pescoço.',
-                    'Contraia o abdômen elevando os ombros do solo.',
-                    'Exhale ao subir e desça devagar inspirando.'
+                    'Deite-se de costas com os joelhos dobrados e pés apoiados.',
+                    'Coloque as mãos ao lado da cabeça sem puxar o pescoço.',
+                    'Contraia o abdômen elevando levemente os ombros do chão.',
+                    'Exhale ao subir e solte o ar na descida.'
                 ]
             },
             {
@@ -365,15 +372,14 @@
                 name: 'Prancha',
                 meta: '3 a 5 séries de 30–60s',
                 sets: 5,
-                reps: '30-60s',
-                targets: 'Core completo (reto abdominal, transverso, oblíquos e lombar), glúteos e ombros.',
+                targets: 'Core completo, glúteos e ombros.',
                 img: 'https://images.unsplash.com/photo-1566241142559-40e1dab266c6?q=80&w=600&auto=format&fit=crop',
-                youtubeId: 'ASdvN_XEl_c',
+                videoUrl: 'https://www.youtube.com/embed/pSHjTRCQxIw',
                 steps: [
                     'Apoie os antebraços e as pontas dos pés no chão.',
-                    'Mantenha os cotovelos alinhados com a linha dos ombros.',
-                    'Mantenha a cabeça, coluna e quadril em uma linha reta sem selar o quadril.',
-                    'Contraia fortemente o abdômen e glúteos durante o tempo determinado.'
+                    'Mantenha os cotovelos alinhados logo abaixo dos ombros.',
+                    'Contraia forte o abdômen e glúteos evitando empinar ou arcar a coluna.',
+                    'Mantenha a respiração constante durante o tempo determinado.'
                 ]
             },
             {
@@ -381,15 +387,14 @@
                 name: 'Agachamentos',
                 meta: '5×10 (50 repetições)',
                 sets: 5,
-                reps: '10 reps',
                 targets: 'Quadríceps, glúteos, posteriores da coxa e core.',
                 img: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=600&auto=format&fit=crop',
-                youtubeId: 'aclHkVaku9U',
+                videoUrl: 'https://www.youtube.com/embed/aclHkVaku9U',
                 steps: [
-                    'Pés afastados na largura dos ombros com pontas ligeiramente para fora.',
-                    'Mantenha o peitoral aberto e coluna neutra.',
-                    'Simule sentar em uma cadeira invisível jogando o quadril para trás e para baixo.',
-                    'Desça até as coxas ficarem paralelas ao chão e suba empurrando pelos calcanhares.'
+                    'Afaste os pés na largura dos ombros.',
+                    'Agache jogando o quadril para trás como se fosse sentar em uma cadeira.',
+                    'Desça até as coxas ficarem paralelas ao chão.',
+                    'Mantenha os joelhos alinhados com as pontas dos pés.'
                 ]
             },
             {
@@ -397,15 +402,14 @@
                 name: 'Levantamento de Calcanhar',
                 meta: '5×10 (50 repetições)',
                 sets: 5,
-                reps: '10 reps',
-                targets: 'Panturrilhas (gastrocnêmio e sóleo) e estabilidade do tornozelo.',
+                targets: 'Panturrilhas e estabilidade do tornozelo.',
                 img: 'https://images.unsplash.com/photo-1434682881908-b43d0467b798?q=80&w=600&auto=format&fit=crop',
-                youtubeId: 'gwLzBJYoWlI',
+                videoUrl: 'https://www.youtube.com/embed/gwLzBJYoWlI',
                 steps: [
-                    'Fique em pé com os pés alinhados. Se necessário, apoie as mãos em uma parede.',
-                    'Eleve o corpo empurrando a ponta dos pés o mais alto possível.',
-                    'Segure 1 segundo no topo sentindo a contração na panturrilha.',
-                    'Desça suavemente até encostar os calcanhares no chão.'
+                    'Fique em pé com a postura ereta.',
+                    'Eleve o corpo contratando as panturrilhas e subindo na ponta dos pés.',
+                    'Pause por 1 segundo no topo.',
+                    'Desça devagar até o calcanhar tocar suavemente no chão.'
                 ]
             },
             {
@@ -413,80 +417,180 @@
                 name: 'Elevação Lateral',
                 meta: '5×5 (25 repetições) com 4 kg',
                 sets: 5,
-                reps: '5 reps',
                 targets: 'Deltoide lateral, trapézio superior e manguito rotador.',
                 img: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=600&auto=format&fit=crop',
-                youtubeId: '3VcKaXpzqRo',
+                videoUrl: 'https://www.youtube.com/embed/3VcKaXpzqRo',
                 steps: [
-                    'Fique em pé segurando o peso/garrafas d\'água ao lado do corpo.',
+                    'Segure os pesos (ou garrafas) ao lado do corpo.',
+                    'Eleve os braços lateralmente até a altura dos ombros.',
                     'Mantenha os cotovelos levemente flexionados.',
-                    'Eleve os braços para os lados até a altura dos ombros.',
-                    'Desça o peso de forma controlada sem deixar cair de uma vez.'
+                    'Controle a descida sem soltar o peso rapidamente.'
                 ]
             }
         ];
 
-        // ESTADOS DA APLICAÇÃO
-        let completedSets = JSON.parse(localStorage.getItem('7ks_completedSets')) || {};
-        let waterMl = parseInt(localStorage.getItem('7ks_water')) || 0;
-        let workoutHistory = JSON.parse(localStorage.getItem('7ks_history')) || [];
-        let userProfile = JSON.parse(localStorage.getItem('7ks_profile')) || null;
+        // VARIÁVEIS DE ESTADO DO USUÁRIO
+        let currentUser = null;
+        let completedSets = {};
+        let waterMl = 0;
+        let workoutHistory = [];
 
         let timerInterval = null;
         let timerTimeLeft = 60;
 
-        // INICIALIZAÇÃO
+        // BANCO DE DADOS LOCAL MULTI-USUÁRIO
+        function getUsersDB() {
+            return JSON.parse(localStorage.getItem('7ks_users_db')) || {};
+        }
+
+        function saveUsersDB(db) {
+            localStorage.setItem('7ks_users_db', JSON.stringify(db));
+        }
+
+        // CARREGAR SESSÃO
         document.addEventListener('DOMContentLoaded', () => {
-            checkUserProfile();
+            const savedSession = localStorage.getItem('7ks_active_user');
+            if (savedSession) {
+                const db = getUsersDB();
+                if (db[savedSession]) {
+                    currentUser = savedSession;
+                    loadUserData();
+                    document.getElementById('authModal').classList.add('hidden');
+                } else {
+                    document.getElementById('authModal').classList.remove('hidden');
+                }
+            } else {
+                document.getElementById('authModal').classList.remove('hidden');
+            }
             renderExercises();
-            updateProgress();
             updateWaterDisplay();
             renderHistory();
         });
 
-        // PERFIL
-        function checkUserProfile() {
-            if (!userProfile) {
-                document.getElementById('profileModal').classList.remove('hidden');
+        // TROCA DE ABAS DE LOGIN/CADASTRO
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const regForm = document.getElementById('registerForm');
+            const loginBtn = document.getElementById('tabLoginBtn');
+            const regBtn = document.getElementById('tabRegisterBtn');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                regForm.classList.add('hidden');
+                loginBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-brand-purple text-white transition";
+                regBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg text-brand-textMuted transition";
             } else {
-                document.getElementById('profileModal').classList.add('hidden');
-                updateProfileDisplay();
+                loginForm.classList.add('hidden');
+                regForm.classList.remove('hidden');
+                loginBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg text-brand-textMuted transition";
+                regBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-brand-purple text-white transition";
             }
         }
 
-        function saveProfile(e) {
+        // REGISTRO
+        function handleRegister(e) {
             e.preventDefault();
-            const nick = document.getElementById('inputNickname').value.trim();
-            const weight = parseFloat(document.getElementById('inputWeight').value);
-            const height = parseFloat(document.getElementById('inputHeight').value);
+            const nick = document.getElementById('regNick').value.trim();
+            const pass = document.getElementById('regPass').value;
+            const weight = parseFloat(document.getElementById('regWeight').value);
+            const height = parseFloat(document.getElementById('regHeight').value);
 
-            userProfile = { nickname: nick, weight: weight, height: height };
-            localStorage.setItem('7ks_profile', JSON.stringify(userProfile));
-
-            document.getElementById('profileModal').classList.add('hidden');
-            updateProfileDisplay();
-        }
-
-        function openProfileEdit() {
-            if (userProfile) {
-                document.getElementById('inputNickname').value = userProfile.nickname;
-                document.getElementById('inputWeight').value = userProfile.weight;
-                document.getElementById('inputHeight').value = userProfile.height;
+            const db = getUsersDB();
+            if (db[nick.toLowerCase()]) {
+                alert("Este apelido já está em uso. Escolha outro!");
+                return;
             }
-            document.getElementById('profileModal').classList.remove('hidden');
+
+            db[nick.toLowerCase()] = {
+                password: pass,
+                profile: { nickname: nick, weight: weight, height: height },
+                completedSets: {},
+                waterMl: 0,
+                history: []
+            };
+
+            saveUsersDB(db);
+            loginUserSession(nick.toLowerCase());
         }
 
-        function updateProfileDisplay() {
-            if (!userProfile) return;
-            document.getElementById('userWelcome').textContent = `Bora treinar, ${userProfile.nickname}!`;
-            document.getElementById('profileNameDisplay').textContent = userProfile.nickname;
-            document.getElementById('profileWeightDisplay').textContent = `${userProfile.weight} kg`;
-            document.getElementById('profileHeightDisplay').textContent = `${userProfile.height} cm`;
+        // LOGIN
+        function handleLogin(e) {
+            e.preventDefault();
+            const nick = document.getElementById('loginUser').value.trim().toLowerCase();
+            const pass = document.getElementById('loginPass').value;
 
-            // Cálculo do IMC
-            if (userProfile.weight && userProfile.height) {
-                const heightM = userProfile.height / 100;
-                const imc = (userProfile.weight / (heightM * heightM)).toFixed(1);
+            const db = getUsersDB();
+            if (!db[nick] || db[nick].password !== pass) {
+                alert("Apelido ou senha incorretos!");
+                return;
+            }
+
+            loginUserSession(nick);
+        }
+
+        function guestLogin() {
+            const nick = "convidado_" + Math.floor(Math.random() * 1000);
+            const db = getUsersDB();
+            db[nick] = {
+                password: 'guest',
+                profile: { nickname: 'Convidado', weight: 70, height: 170 },
+                completedSets: {},
+                waterMl: 0,
+                history: []
+            };
+            saveUsersDB(db);
+            loginUserSession(nick);
+        }
+
+        function loginUserSession(usernameKey) {
+            currentUser = usernameKey;
+            localStorage.setItem('7ks_active_user', currentUser);
+            loadUserData();
+            document.getElementById('authModal').classList.add('hidden');
+        }
+
+        function logout() {
+            localStorage.removeItem('7ks_active_user');
+            location.reload();
+        }
+
+        function loadUserData() {
+            const db = getUsersDB();
+            const userData = db[currentUser];
+            if (!userData) return;
+
+            completedSets = userData.completedSets || {};
+            waterMl = userData.waterMl || 0;
+            workoutHistory = userData.history || [];
+
+            updateProfileDisplay(userData.profile);
+            renderExercises();
+            updateProgress();
+            updateWaterDisplay();
+            renderHistory();
+        }
+
+        function syncUserData() {
+            if (!currentUser) return;
+            const db = getUsersDB();
+            if (db[currentUser]) {
+                db[currentUser].completedSets = completedSets;
+                db[currentUser].waterMl = waterMl;
+                db[currentUser].history = workoutHistory;
+                saveUsersDB(db);
+            }
+        }
+
+        function updateProfileDisplay(prof) {
+            if (!prof) return;
+            document.getElementById('userWelcome').textContent = `Bora treinar, ${prof.nickname}!`;
+            document.getElementById('profileNameDisplay').textContent = prof.nickname;
+            document.getElementById('profileWeightDisplay').textContent = `${prof.weight} kg`;
+            document.getElementById('profileHeightDisplay').textContent = `${prof.height} cm`;
+
+            if (prof.weight && prof.height) {
+                const heightM = prof.height / 100;
+                const imc = (prof.weight / (heightM * heightM)).toFixed(1);
                 document.getElementById('profileImcDisplay').textContent = imc;
             }
         }
@@ -524,10 +628,8 @@
                                 <h3 class="font-display font-extrabold text-lg text-white leading-snug">${ex.name}</h3>
                                 <p class="text-xs font-semibold text-brand-purpleLight">${ex.meta}</p>
                             </div>
-                            <!-- BOTÃO COMO EXECUTAR -->
-                            <button onclick="openTutorialModal('${ex.id}')" class="bg-brand-purple/80 hover:bg-brand-purple text-white text-[11px] font-bold px-3 py-1.5 rounded-xl border border-brand-purpleLight/50 flex items-center gap-1.5 shadow-md active:scale-95 transition">
-                                <i class="fa-solid fa-circle-play text-xs"></i>
-                                Como executar
+                            <button onclick="openExerciseModal('${ex.id}')" class="text-[10px] font-bold bg-brand-purple/30 border border-brand-purple/50 hover:bg-brand-purple text-white px-2.5 py-1.5 rounded-lg flex items-center gap-1 backdrop-blur-md">
+                                <i class="fa-solid fa-circle-play text-brand-purpleLight"></i> Como executar
                             </button>
                         </div>
                     </div>
@@ -544,45 +646,12 @@
             });
         }
 
-        // TUTORIAL MODAL (COMO EXECUTAR)
-        function openTutorialModal(exerciseId) {
-            const ex = exercises.find(e => e.id === exerciseId);
-            if (!ex) return;
-
-            document.getElementById('modalTitle').textContent = `Como Executar: ${ex.name}`;
-            
-            // Set YouTube embed URL
-            const iframe = document.getElementById('modalVideoIframe');
-            iframe.src = `https://www.youtube.com/embed/${ex.youtubeId}?autoplay=1&rel=0`;
-
-            // Populate steps
-            const container = document.getElementById('modalInstructions');
-            container.innerHTML = '';
-            ex.steps.forEach((step, idx) => {
-                const stepEl = document.createElement('div');
-                stepEl.className = "flex items-start gap-2 bg-black/40 p-2.5 rounded-xl border border-white/5";
-                stepEl.innerHTML = `
-                    <span class="w-5 h-5 rounded-full bg-brand-purple/20 text-brand-purpleLight font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">${idx + 1}</span>
-                    <p class="text-xs text-gray-300 leading-snug">${step}</p>
-                `;
-                container.appendChild(stepEl);
-            });
-
-            document.getElementById('tutorialModal').classList.remove('hidden');
-        }
-
-        function closeTutorialModal() {
-            document.getElementById('tutorialModal').classList.add('hidden');
-            // Clear iframe src to stop video audio
-            document.getElementById('modalVideoIframe').src = '';
-        }
-
-        // TOGGLE DA SÉRIE E TIMER
+        // TOGGLE DA SÉRIE
         function toggleSet(exerciseId, setNum) {
             const key = `${exerciseId}_set_${setNum}`;
             completedSets[key] = !completedSets[key];
 
-            localStorage.setItem('7ks_completedSets', JSON.stringify(completedSets));
+            syncUserData();
 
             const btn = document.getElementById(`btn_${key}`);
             if (completedSets[key]) {
@@ -595,7 +664,31 @@
             updateProgress();
         }
 
-        // CRONÔMETRO DE DESCANSO (1 MINUTO)
+        // MODAL DE EXECUÇÃO
+        function openExerciseModal(exerciseId) {
+            const ex = exercises.find(item => item.id === exerciseId);
+            if (!ex) return;
+
+            document.getElementById('modalExerciseTitle').textContent = `Como executar: ${ex.name}`;
+            document.getElementById('modalVideoFrame').src = ex.videoUrl;
+
+            const stepsList = document.getElementById('modalStepsList');
+            stepsList.innerHTML = '';
+            ex.steps.forEach(step => {
+                const li = document.createElement('li');
+                li.textContent = step;
+                stepsList.appendChild(li);
+            });
+
+            document.getElementById('exerciseModal').classList.remove('hidden');
+        }
+
+        function closeExerciseModal() {
+            document.getElementById('exerciseModal').classList.add('hidden');
+            document.getElementById('modalVideoFrame').src = '';
+        }
+
+        // CRONÔMETRO DE DESCANSO
         function startRestTimer() {
             clearInterval(timerInterval);
             timerTimeLeft = 60;
@@ -638,10 +731,10 @@
             document.getElementById('progressText').textContent = `${percent}%`;
         }
 
-        // AGUA
+        // ÁGUA
         function addWater(amount) {
             waterMl = Math.max(0, waterMl + amount);
-            localStorage.setItem('7ks_water', waterMl);
+            syncUserData();
             updateWaterDisplay();
         }
 
@@ -653,13 +746,13 @@
         function resetWorkout() {
             if (confirm("Tem certeza que deseja resetar os checks deste treino?")) {
                 completedSets = {};
-                localStorage.removeItem('7ks_completedSets');
+                syncUserData();
                 renderExercises();
                 updateProgress();
             }
         }
 
-        // SALVAR TREINO NO HISTÓRICO
+        // SALVAR TREINO
         function finishWorkout() {
             let totalSets = 0;
             exercises.forEach(ex => totalSets += ex.sets);
@@ -687,14 +780,14 @@
             };
 
             workoutHistory.unshift(record);
-            localStorage.setItem('7ks_history', JSON.stringify(workoutHistory));
+            syncUserData();
 
             renderHistory();
             switchTab('progress');
             alert("Treino salvo com sucesso no seu Histórico!");
         }
 
-        // RENDERIZAR ABA HISTÓRICO
+        // HISTÓRICO
         function renderHistory() {
             const container = document.getElementById('historyList');
             document.getElementById('historyCount').textContent = `${workoutHistory.length} treinos salvos`;
@@ -753,10 +846,10 @@
             const item = workoutHistory.find(h => h.id === id);
             if (!item) return;
 
-            const newNote = prompt("Adicione observações para este treino (ex: pesos, sensações):", item.note || "");
+            const newNote = prompt("Adicione observações para este treino:", item.note || "");
             if (newNote !== null) {
                 item.note = newNote.trim();
-                localStorage.setItem('7ks_history', JSON.stringify(workoutHistory));
+                syncUserData();
                 renderHistory();
             }
         }
@@ -764,7 +857,7 @@
         function deleteHistory(id) {
             if (confirm("Apagar este registro do histórico?")) {
                 workoutHistory = workoutHistory.filter(h => h.id !== id);
-                localStorage.setItem('7ks_history', JSON.stringify(workoutHistory));
+                syncUserData();
                 renderHistory();
             }
         }
