@@ -8,9 +8,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Font: Inter & Montserrat -->
+    <!-- Google Fonts: Inter & Montserrat -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
-    <!-- Tailwind Config -->
+    
     <script>
         tailwind.config = {
             theme: {
@@ -33,6 +33,7 @@
             }
         }
     </script>
+    
     <style>
         body {
             background-color: #0A0A0C;
@@ -40,9 +41,11 @@
             -webkit-tap-highlight-color: transparent;
         }
         .purple-glow {
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.25);
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.25);
         }
-        /* Custom Scrollbar */
+        .purple-glow-sm {
+            box-shadow: 0 0 12px rgba(139, 92, 246, 0.15);
+        }
         ::-webkit-scrollbar {
             width: 4px;
         }
@@ -57,94 +60,145 @@
 </head>
 <body class="font-sans antialiased bg-brand-black text-white min-h-screen pb-24 select-none">
 
-    <!-- MODAL DE AUTENTICAÇÃO / PERFIL -->
-    <div id="authModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div id="authModal" class="fixed inset-0 bg-black/95 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-brand-card border border-brand-purple/40 rounded-3xl p-6 w-full max-w-md purple-glow">
+            
             <div class="text-center mb-6">
                 <div class="w-16 h-16 bg-brand-purple/20 border border-brand-purple rounded-2xl flex items-center justify-center mx-auto mb-3">
                     <i class="fa-solid fa-dumbbell text-brand-purple text-2xl"></i>
                 </div>
                 <h2 class="text-2xl font-display font-black text-white">7K'S <span class="text-brand-purple">CALISTENICS</span></h2>
-                <p class="text-xs text-brand-textMuted mt-1">Seu personal virtual 100% gratuito!</p>
+                <p id="authSubtitle" class="text-xs text-brand-textMuted mt-1">Seu personal virtual 100% gratuito!</p>
             </div>
 
-            <!-- Abas Login / Cadastro -->
-            <div class="flex bg-black/50 p-1 rounded-xl mb-4 border border-white/5">
-                <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-2 text-xs font-bold rounded-lg bg-brand-purple text-white transition">Entrar</button>
-                <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="flex-1 py-2 text-xs font-bold rounded-lg text-brand-textMuted transition">Criar Conta</button>
+            <!-- TAB SWITCHER -->
+            <div class="flex bg-black/60 p-1 rounded-xl mb-4 border border-white/5">
+                <button type="button" id="tabAuthLogin" onclick="switchAuthTab('login')" class="w-1/2 py-2 rounded-lg text-xs font-bold text-white bg-brand-purple transition">Entrar</button>
+                <button type="button" id="tabAuthRegister" onclick="switchAuthTab('register')" class="w-1/2 py-2 rounded-lg text-xs font-bold text-brand-textMuted hover:text-white transition">Criar Conta</button>
             </div>
 
-            <!-- FORMULÁRIO DE LOGIN -->
-            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+            <!-- FORMULARIO LOGIN -->
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3">
                 <div>
-                    <label class="block text-[10px] font-semibold uppercase tracking-wider text-brand-textMuted mb-1">Apelido ou E-mail</label>
-                    <input type="text" id="loginUser" required placeholder="Digite seu apelido" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple transition text-sm">
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-brand-textMuted mb-1">E-mail</label>
+                    <input type="email" id="loginEmail" required placeholder="seu@email.com" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple text-xs transition">
                 </div>
                 <div>
-                    <label class="block text-[10px] font-semibold uppercase tracking-wider text-brand-textMuted mb-1">Senha</label>
-                    <input type="password" id="loginPass" required placeholder="••••••••" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple transition text-sm">
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-brand-textMuted mb-1">Senha</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple text-xs transition">
                 </div>
-                <button type="submit" class="w-full mt-2 bg-brand-purple hover:bg-brand-purpleDark active:scale-95 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-brand-purple/30 text-sm">
+                <button type="submit" id="btnLoginSubmit" class="w-full mt-2 bg-brand-purple hover:bg-brand-purpleDark active:scale-95 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-brand-purple/30 text-xs">
                     ENTRAR NA CONTA
                 </button>
             </form>
 
-            <!-- FORMULÁRIO DE CADASTRO -->
+            <!-- FORMULARIO CADASTRO -->
             <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-3 hidden">
                 <div>
-                    <label class="block text-[10px] font-semibold uppercase tracking-wider text-brand-textMuted mb-1">Apelido / Nome</label>
-                    <input type="text" id="regNick" required placeholder="Ex: Atleta 7k" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple transition text-sm">
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-brand-textMuted mb-1">Apelido / Nome</label>
+                    <input type="text" id="regNickname" required placeholder="Ex: Atleta 7k" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple text-xs transition">
                 </div>
                 <div>
-                    <label class="block text-[10px] font-semibold uppercase tracking-wider text-brand-textMuted mb-1">Senha</label>
-                    <input type="password" id="regPass" required placeholder="Crie uma senha" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple transition text-sm">
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-brand-textMuted mb-1">E-mail</label>
+                    <input type="email" id="regEmail" required placeholder="seu@email.com" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple text-xs transition">
                 </div>
-                <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-brand-textMuted mb-1">Senha (mínimo 6 caracteres)</label>
+                    <input type="password" id="regPassword" required minlength="6" placeholder="••••••••" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple text-xs transition">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-[10px] font-semibold uppercase tracking-wider text-brand-textMuted mb-1">Peso (kg)</label>
-                        <input type="number" step="0.1" id="regWeight" required placeholder="Ex: 75.5" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple transition text-sm">
+                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-brand-textMuted mb-1">Peso (kg)</label>
+                        <input type="number" step="0.1" id="regWeight" required placeholder="75.5" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple text-xs transition">
                     </div>
                     <div>
-                        <label class="block text-[10px] font-semibold uppercase tracking-wider text-brand-textMuted mb-1">Altura (cm)</label>
-                        <input type="number" id="regHeight" required placeholder="Ex: 175" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple transition text-sm">
+                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-brand-textMuted mb-1">Altura (cm)</label>
+                        <input type="number" id="regHeight" required placeholder="175" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple text-xs transition">
                     </div>
                 </div>
-                <button type="submit" class="w-full mt-2 bg-brand-purple hover:bg-brand-purpleDark active:scale-95 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-brand-purple/30 text-sm">
-                    CRIAR CONTA & COMEÇAR
+                <button type="submit" id="btnRegisterSubmit" class="w-full mt-2 bg-brand-purple hover:bg-brand-purpleDark active:scale-95 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-brand-purple/30 text-xs">
+                    CRIAR CONTA & SALVAR NA NUVEM
                 </button>
             </form>
 
-            <button onclick="guestLogin()" class="w-full text-center text-xs text-brand-textMuted hover:text-white mt-4 flex items-center justify-center gap-1">
-                <i class="fa-solid fa-user-ninja"></i> Continuar sem cadastro (Modo Convidado)
-            </button>
-        </div>
-    </div>
-
-    <!-- MODAL "COMO EXECUTA" (VÍDEO E PASSO A PASSO) -->
-    <div id="exerciseModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-brand-card border border-brand-purple/40 rounded-3xl p-5 w-full max-w-md purple-glow max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-3">
-                <h3 id="modalExerciseTitle" class="font-display font-extrabold text-lg text-white">Como Executar</h3>
-                <button onclick="closeExerciseModal()" class="w-8 h-8 rounded-full bg-black/50 border border-white/10 text-brand-textMuted hover:text-white flex items-center justify-center">
-                    <i class="fa-solid fa-xmark"></i>
+            <!-- GUEST MODE -->
+            <div class="mt-4 pt-4 border-t border-white/10 text-center">
+                <button type="button" onclick="handleAnonymousLogin()" class="text-xs text-brand-textMuted hover:text-brand-purpleLight font-semibold flex items-center justify-center gap-1.5 mx-auto">
+                    <i class="fa-solid fa-user-ninja"></i> Continuar sem cadastro (Modo Convidado)
                 </button>
             </div>
 
-            <!-- PLAYER VÍDEO -->
-            <div class="relative w-full aspect-video rounded-2xl overflow-hidden border border-white/10 bg-black mb-4">
-                <iframe id="modalVideoFrame" class="w-full h-full" src="" title="Vídeo de execução" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <!-- ALERT BOX -->
+            <div id="authAlert" class="mt-3 p-3 bg-red-500/20 border border-red-500/40 rounded-xl text-red-300 text-xs hidden text-center"></div>
+        </div>
+    </div>
+
+    <div id="profileEditModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-brand-card border border-brand-purple/40 rounded-3xl p-6 w-full max-w-md purple-glow">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-display font-bold text-lg text-white flex items-center gap-2">
+                    <i class="fa-solid fa-user-gear text-brand-purple"></i> Editar Dados do Perfil
+                </h3>
+                <button onclick="closeProfileEditModal()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white">
+                    <i class="fa-solid fa-xmark text-xs"></i>
+                </button>
             </div>
 
-            <div class="space-y-3">
-                <h4 class="text-xs font-bold uppercase tracking-wider text-brand-purpleLight"><i class="fa-solid fa-list-check mr-1"></i> Passo a Passo Correto:</h4>
-                <ul id="modalStepsList" class="text-xs text-brand-textMuted space-y-2 list-disc pl-4">
-                    <!-- Preenchido via JS -->
-                </ul>
+            <form onsubmit="updateProfileInCloud(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-brand-textMuted mb-1">Apelido</label>
+                    <input type="text" id="editNickname" required class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white text-xs">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-brand-textMuted mb-1">Peso (kg)</label>
+                        <input type="number" step="0.1" id="editWeight" required class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-brand-textMuted mb-1">Altura (cm)</label>
+                        <input type="number" id="editHeight" required class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white text-xs">
+                    </div>
+                </div>
+                <button type="submit" class="w-full mt-3 bg-brand-purple hover:bg-brand-purpleDark active:scale-95 text-white font-bold py-3 rounded-xl text-xs transition shadow-lg shadow-brand-purple/20">
+                    SALVAR NA NUVEM
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="tutorialModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-brand-card border border-brand-purple/40 rounded-3xl w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden purple-glow">
+            <div class="p-4 border-b border-white/10 flex justify-between items-center bg-black/40">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-play text-brand-purple"></i>
+                    <h3 id="modalTitle" class="font-display font-bold text-base text-white">Como Executar</h3>
+                </div>
+                <button onclick="closeTutorialModal()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 active:scale-95">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <div class="p-4 overflow-y-auto space-y-4">
+                <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-black border border-white/10">
+                    <iframe id="modalVideoIframe" class="w-full h-full" src="" title="Vídeo de Execução" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-brand-purpleLight flex items-center gap-1.5">
+                        <i class="fa-solid fa-list-check"></i> Passo a Passo Correto:
+                    </h4>
+                    <div id="modalInstructions" class="space-y-2 text-xs text-gray-300 leading-relaxed"></div>
+                </div>
+            </div>
+
+            <div class="p-3 border-t border-white/10 bg-black/40 text-center">
+                <button onclick="closeTutorialModal()" class="w-full bg-brand-purple/20 hover:bg-brand-purple/30 text-brand-purpleLight border border-brand-purple/40 font-bold py-2.5 rounded-xl text-xs transition">
+                    Entendi, Voltar ao Treino
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- CABEÇALHO -->
     <header class="sticky top-0 z-40 bg-brand-black/90 backdrop-blur-md border-b border-white/5 px-4 py-3">
         <div class="max-w-md mx-auto flex items-center justify-between">
             <div class="flex items-center space-x-3">
@@ -153,18 +207,20 @@
                 </div>
                 <div>
                     <h1 class="font-display font-extrabold text-base tracking-wide text-white leading-tight">7k’s CALISTENICS</h1>
-                    <p id="userWelcome" class="text-xs text-brand-textMuted">Bora treinar!</p>
+                    <p id="userWelcome" class="text-xs text-brand-textMuted">Carregando conta...</p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <button onclick="logout()" title="Sair da conta" class="text-xs bg-red-500/10 border border-red-500/20 px-2.5 py-1.5 rounded-lg text-red-400 hover:bg-red-500/20">
+                <button onclick="openProfileEditModal()" class="text-xs bg-brand-card hover:bg-brand-purple/20 border border-white/10 px-3 py-1.5 rounded-lg text-brand-purpleLight flex items-center gap-1.5">
+                    <i class="fa-solid fa-user-gear"></i> Perfil
+                </button>
+                <button onclick="handleLogout()" class="text-xs bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 p-2 rounded-lg" title="Sair da Conta">
                     <i class="fa-solid fa-right-from-bracket"></i>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- CONTEÚDO PRINCIPAL (ABAS) -->
     <main class="max-w-md mx-auto px-4 pt-4">
 
         <!-- ABA 1: TREINO -->
@@ -215,9 +271,7 @@
             </div>
 
             <!-- LISTA DE EXERCÍCIOS -->
-            <div id="exerciseList" class="space-y-4">
-                <!-- Injetado via Javascript -->
-            </div>
+            <div id="exerciseList" class="space-y-4"></div>
 
             <!-- BOTÃO FINALIZAR TREINO -->
             <div class="pt-2 pb-6">
@@ -239,9 +293,12 @@
                         </div>
                         <div>
                             <h3 id="profileNameDisplay" class="font-display font-bold text-lg text-white">Atleta</h3>
-                            <p class="text-xs text-brand-textMuted">Membro 7k's Calistenics</p>
+                            <p id="profileUserEmail" class="text-[11px] text-brand-textMuted">Carregando...</p>
                         </div>
                     </div>
+                    <button onclick="openProfileEditModal()" class="text-xs bg-black/40 border border-white/10 px-2.5 py-1.5 rounded-lg text-brand-textMuted hover:text-white">
+                        <i class="fa-solid fa-pen-to-square"></i> Editar
+                    </button>
                 </div>
 
                 <div class="grid grid-cols-3 gap-2 text-center">
@@ -266,14 +323,11 @@
                 <span id="historyCount" class="text-xs text-brand-textMuted">0 treinos salvos</span>
             </div>
 
-            <div id="historyList" class="space-y-3">
-                <!-- Lista de Históricos via JS -->
-            </div>
+            <div id="historyList" class="space-y-3"></div>
         </section>
 
     </main>
 
-    <!-- TIMERS / CRONÔMETRO FLUTUANTE DE DESCANSO -->
     <div id="timerContainer" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-brand-card border border-brand-purple/60 px-5 py-3 rounded-2xl purple-glow flex items-center space-x-4 z-40 hidden">
         <div class="w-8 h-8 rounded-full bg-brand-purple/20 flex items-center justify-center text-brand-purple text-sm animate-pulse">
             <i class="fa-solid fa-stopwatch"></i>
@@ -287,7 +341,6 @@
         </button>
     </div>
 
-    <!-- NAVEGAÇÃO INFERIOR ESTILO iOS -->
     <nav class="fixed bottom-0 left-0 right-0 bg-brand-black/95 backdrop-blur-lg border-t border-white/10 px-6 py-2.5 z-40">
         <div class="max-w-md mx-auto flex justify-around">
             <button onclick="switchTab('workout')" id="navWorkout" class="flex flex-col items-center space-y-1 text-brand-purple">
@@ -301,11 +354,48 @@
         </div>
     </nav>
 
-    <!-- AUDIO SOM FIM DESCANSO -->
+    <!-- AUDIO FOR TIMER END -->
     <audio id="beepSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
-    <script>
-        // LISTA DE EXERCÍCIOS
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInWithCustomToken, 
+            signInAnonymously, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword, 
+            signOut, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, 
+            collection, 
+            addDoc, 
+            deleteDoc, 
+            updateDoc, 
+            onSnapshot 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // FIREBASE INITIALIZATION
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "demo-api-key",
+            authDomain: "demo-app.firebaseapp.com",
+            projectId: "demo-app",
+            storageBucket: "demo-app.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:demo"
+        };
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : '7ks-calistenics-app';
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // DATA CONSTANTS FOR EXERCISES
         const exercises = [
             {
                 id: 'flexoes',
@@ -314,12 +404,12 @@
                 sets: 5,
                 targets: 'Peitoral, tríceps, ombros (deltoide anterior) e core.',
                 img: 'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?q=80&w=600&auto=format&fit=crop',
-                videoUrl: 'https://www.youtube.com/embed/iod3sACpL4w',
+                youtubeId: 'iod3sACpL4w',
                 steps: [
-                    'Mantenha as mãos alinhadas na largura dos ombros.',
-                    'Mantenha o corpo reto como uma prancha, contraindo o abdômen e glúteos.',
-                    'Desça o peito até quase tocar o chão mantendo os cotovelos a 45 graus.',
-                    'Empurre o chão até estender os braços completamente.'
+                    'Mantenha as mãos ligeiramente mais largas que a largura dos ombros.',
+                    'Mantenha o corpo reto como uma prancha, ativando glúteos e abdômen.',
+                    'Desça o peitoral até quase tocar o chão com os cotovelos a 45 graus.',
+                    'Empurre o chão até estender os braços totalmente.'
                 ]
             },
             {
@@ -329,12 +419,12 @@
                 sets: 5,
                 targets: 'Latíssimo do dorso, bíceps, antebraços, trapézio e romboides.',
                 img: 'https://images.unsplash.com/photo-1598971457999-ca4ef48a9a71?q=80&w=600&auto=format&fit=crop',
-                videoUrl: 'https://www.youtube.com/embed/eGo4IYlbE5g',
+                youtubeId: 'eGo4IYlbE5g',
                 steps: [
-                    'Segure a barra com pegada pronada (palmas para a frente).',
-                    'Inicie o movimento puxando as escápulas para baixo.',
-                    'Puxe o corpo para cima até o queixo passar da barra.',
-                    'Desça de forma controlada até estender totalmente os braços.'
+                    'Segure a barra com pegada pronada na largura dos ombros.',
+                    'Inicie a puxada ativando as escápulas para baixo.',
+                    'Puxe o corpo até o queixo ultrapassar a barra.',
+                    'Desça de forma controlada estendendo os braços.'
                 ]
             },
             {
@@ -344,12 +434,12 @@
                 sets: 5,
                 targets: 'Costas (parte média), bíceps, antebraços e deltoide posterior.',
                 img: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=600&auto=format&fit=crop',
-                videoUrl: 'https://www.youtube.com/embed/G2eJ-A_xPUI',
+                youtubeId: 'G2eJ-A_xPUI',
                 steps: [
-                    'Ajuste uma barra baixa na altura da cintura.',
-                    'Posicione-se embaixo da barra com os calcanhares apoiados no chão.',
-                    'Puxe o peito em direção à barra mantendo o corpo alinhado.',
-                    'Retorne devagar sem soltar o corpo.'
+                    'Posicione-se embaixo da barra baixa com os calcanhares no chão.',
+                    'Mantenha o corpo totalmente reto.',
+                    'Puxe o peito em direção à barra contraindo as costas.',
+                    'Retorne devagar até estender os cotovelos.'
                 ]
             },
             {
@@ -359,12 +449,12 @@
                 sets: 5,
                 targets: 'Reto abdominal e auxílio no fortalecimento do core.',
                 img: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=600&auto=format&fit=crop',
-                videoUrl: 'https://www.youtube.com/embed/Xyd_fa5zoEU',
+                youtubeId: 'Xyd_fa5zoEU',
                 steps: [
-                    'Deite-se de costas com os joelhos dobrados e pés apoiados.',
-                    'Coloque as mãos ao lado da cabeça sem puxar o pescoço.',
-                    'Contraia o abdômen elevando levemente os ombros do chão.',
-                    'Exhale ao subir e solte o ar na descida.'
+                    'Deite-se de costas com joelhos dobrados e pés firmes.',
+                    'Mantenha as mãos ao lado da cabeça sem forçar o pescoço.',
+                    'Contraia o abdômen elevando os ombros do chão.',
+                    'Exhale ao subir e inspire na descida.'
                 ]
             },
             {
@@ -374,12 +464,12 @@
                 sets: 5,
                 targets: 'Core completo, glúteos e ombros.',
                 img: 'https://images.unsplash.com/photo-1566241142559-40e1dab266c6?q=80&w=600&auto=format&fit=crop',
-                videoUrl: 'https://www.youtube.com/embed/pSHjTRCQxIw',
+                youtubeId: 'pSHjTRCQxIw',
                 steps: [
                     'Apoie os antebraços e as pontas dos pés no chão.',
-                    'Mantenha os cotovelos alinhados logo abaixo dos ombros.',
-                    'Contraia forte o abdômen e glúteos evitando empinar ou arcar a coluna.',
-                    'Mantenha a respiração constante durante o tempo determinado.'
+                    'Alinhe os cotovelos logo abaixo dos ombros.',
+                    'Mantenha o corpo reto sem selar nem levantar demais o quadril.',
+                    'Contraia o abdômen firmemente durante o tempo estipulado.'
                 ]
             },
             {
@@ -389,12 +479,12 @@
                 sets: 5,
                 targets: 'Quadríceps, glúteos, posteriores da coxa e core.',
                 img: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=600&auto=format&fit=crop',
-                videoUrl: 'https://www.youtube.com/embed/aclHkVaku9U',
+                youtubeId: 'aclHkVaku9U',
                 steps: [
                     'Afaste os pés na largura dos ombros.',
-                    'Agache jogando o quadril para trás como se fosse sentar em uma cadeira.',
+                    'Projete o quadril para trás e agache como se fosse sentar.',
                     'Desça até as coxas ficarem paralelas ao chão.',
-                    'Mantenha os joelhos alinhados com as pontas dos pés.'
+                    'Empurre pelos calcanhares para retornar.'
                 ]
             },
             {
@@ -404,12 +494,12 @@
                 sets: 5,
                 targets: 'Panturrilhas e estabilidade do tornozelo.',
                 img: 'https://images.unsplash.com/photo-1434682881908-b43d0467b798?q=80&w=600&auto=format&fit=crop',
-                videoUrl: 'https://www.youtube.com/embed/gwLzBJYoWlI',
+                youtubeId: 'gwLzBJYoWlI',
                 steps: [
-                    'Fique em pé com a postura ereta.',
-                    'Eleve o corpo contratando as panturrilhas e subindo na ponta dos pés.',
-                    'Pause por 1 segundo no topo.',
-                    'Desça devagar até o calcanhar tocar suavemente no chão.'
+                    'Fique em pé com postura ereta.',
+                    'Eleve o corpo empurrando a ponta dos pés o máximo possível.',
+                    'Segure 1 segundo no topo sentindo a panturrilha.',
+                    'Desça suavemente até encostar os calcanhares no chão.'
                 ]
             },
             {
@@ -419,18 +509,18 @@
                 sets: 5,
                 targets: 'Deltoide lateral, trapézio superior e manguito rotador.',
                 img: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=600&auto=format&fit=crop',
-                videoUrl: 'https://www.youtube.com/embed/3VcKaXpzqRo',
+                youtubeId: '3VcKaXpzqRo',
                 steps: [
-                    'Segure os pesos (ou garrafas) ao lado do corpo.',
-                    'Eleve os braços lateralmente até a altura dos ombros.',
-                    'Mantenha os cotovelos levemente flexionados.',
-                    'Controle a descida sem soltar o peso rapidamente.'
+                    'Segure os pesos ao lado do corpo com cotovelos levemente flexionados.',
+                    'Eleve os braços lateralmente até a linha dos ombros.',
+                    'Controle o peso ao retornar sem soltar o movimento.'
                 ]
             }
         ];
 
-        // VARIÁVEIS DE ESTADO DO USUÁRIO
+        // APP STATE
         let currentUser = null;
+        let userProfile = null;
         let completedSets = {};
         let waterMl = 0;
         let workoutHistory = [];
@@ -438,164 +528,193 @@
         let timerInterval = null;
         let timerTimeLeft = 60;
 
-        // BANCO DE DADOS LOCAL MULTI-USUÁRIO
-        function getUsersDB() {
-            return JSON.parse(localStorage.getItem('7ks_users_db')) || {};
-        }
+        let historyUnsubscribe = null;
+        let userDataUnsubscribe = null;
 
-        function saveUsersDB(db) {
-            localStorage.setItem('7ks_users_db', JSON.stringify(db));
-        }
-
-        // CARREGAR SESSÃO
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedSession = localStorage.getItem('7ks_active_user');
-            if (savedSession) {
-                const db = getUsersDB();
-                if (db[savedSession]) {
-                    currentUser = savedSession;
-                    loadUserData();
-                    document.getElementById('authModal').classList.add('hidden');
-                } else {
-                    document.getElementById('authModal').classList.remove('hidden');
+        // AUTH SETUP
+        async function initAuth() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
                 }
+            } catch (err) {
+                console.log("Custom auth fallback active");
+            }
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            currentUser = user;
+            if (user) {
+                document.getElementById('authModal').classList.add('hidden');
+                setupCloudListeners(user.uid);
             } else {
                 document.getElementById('authModal').classList.remove('hidden');
+                if (historyUnsubscribe) historyUnsubscribe();
+                if (userDataUnsubscribe) userDataUnsubscribe();
             }
-            renderExercises();
-            updateWaterDisplay();
-            renderHistory();
         });
 
-        // TROCA DE ABAS DE LOGIN/CADASTRO
-        function switchAuthTab(tab) {
-            const loginForm = document.getElementById('loginForm');
-            const regForm = document.getElementById('registerForm');
-            const loginBtn = document.getElementById('tabLoginBtn');
-            const regBtn = document.getElementById('tabRegisterBtn');
+        // FIRESTORE LISTENERS FOR CLOUD SYNC
+        function setupCloudListeners(uid) {
+            // Profile & Current Workout State
+            const userDocRef = doc(db, 'artifacts', appId, 'users', uid, 'data', 'profile');
+            userDataUnsubscribe = onSnapshot(userDocRef, (snap) => {
+                if (snap.exists()) {
+                    const data = snap.data();
+                    userProfile = { nickname: data.nickname || 'Atleta', weight: data.weight || 70, height: data.height || 170 };
+                    completedSets = data.completedSets || {};
+                    waterMl = data.waterMl || 0;
+                } else {
+                    userProfile = { nickname: 'Atleta 7k', weight: 70, height: 170 };
+                    completedSets = {};
+                    waterMl = 0;
+                    saveUserDataToCloud();
+                }
+                updateUI();
+            }, (error) => {
+                console.error("Firestore sync error:", error);
+            });
+
+            // History Listener
+            const historyCollRef = collection(db, 'artifacts', appId, 'users', uid, 'history');
+            historyUnsubscribe = onSnapshot(historyCollRef, (snap) => {
+                workoutHistory = [];
+                snap.forEach(docSnap => {
+                    workoutHistory.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                workoutHistory.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                renderHistory();
+            }, (error) => {
+                console.error("Firestore history sync error:", error);
+            });
+        }
+
+        async function saveUserDataToCloud() {
+            if (!currentUser) return;
+            const userDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'data', 'profile');
+            try {
+                await setDoc(userDocRef, {
+                    nickname: userProfile?.nickname || 'Atleta',
+                    weight: userProfile?.weight || 70,
+                    height: userProfile?.height || 170,
+                    completedSets: completedSets,
+                    waterMl: waterMl,
+                    updatedAt: Date.now()
+                }, { merge: true });
+            } catch (err) {
+                console.error("Error saving to Firestore:", err);
+            }
+        }
+
+        // AUTH TAB SWITCH
+        window.switchAuthTab = function(tab) {
+            const btnLogin = document.getElementById('tabAuthLogin');
+            const btnReg = document.getElementById('tabAuthRegister');
+            const formLogin = document.getElementById('loginForm');
+            const formReg = document.getElementById('registerForm');
+            const alert = document.getElementById('authAlert');
+            alert.classList.add('hidden');
 
             if (tab === 'login') {
-                loginForm.classList.remove('hidden');
-                regForm.classList.add('hidden');
-                loginBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-brand-purple text-white transition";
-                regBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg text-brand-textMuted transition";
+                btnLogin.className = "w-1/2 py-2 rounded-lg text-xs font-bold text-white bg-brand-purple transition";
+                btnReg.className = "w-1/2 py-2 rounded-lg text-xs font-bold text-brand-textMuted hover:text-white transition";
+                formLogin.classList.remove('hidden');
+                formReg.classList.add('hidden');
             } else {
-                loginForm.classList.add('hidden');
-                regForm.classList.remove('hidden');
-                loginBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg text-brand-textMuted transition";
-                regBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-brand-purple text-white transition";
+                btnReg.className = "w-1/2 py-2 rounded-lg text-xs font-bold text-white bg-brand-purple transition";
+                btnLogin.className = "w-1/2 py-2 rounded-lg text-xs font-bold text-brand-textMuted hover:text-white transition";
+                formReg.classList.remove('hidden');
+                formLogin.classList.add('hidden');
             }
-        }
+        };
 
-        // REGISTRO
-        function handleRegister(e) {
+        // LOGIN HANDLER
+        window.handleLogin = async function(e) {
             e.preventDefault();
-            const nick = document.getElementById('regNick').value.trim();
-            const pass = document.getElementById('regPass').value;
+            const email = document.getElementById('loginEmail').value.trim();
+            const pass = document.getElementById('loginPassword').value;
+            const alert = document.getElementById('authAlert');
+            alert.classList.add('hidden');
+
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (err) {
+                alert.textContent = "Erro ao entrar: Verifique o e-mail e a senha digitados.";
+                alert.classList.remove('hidden');
+            }
+        };
+
+        // REGISTER HANDLER
+        window.handleRegister = async function(e) {
+            e.preventDefault();
+            const nick = document.getElementById('regNickname').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const pass = document.getElementById('regPassword').value;
             const weight = parseFloat(document.getElementById('regWeight').value);
             const height = parseFloat(document.getElementById('regHeight').value);
+            const alert = document.getElementById('authAlert');
+            alert.classList.add('hidden');
 
-            const db = getUsersDB();
-            if (db[nick.toLowerCase()]) {
-                alert("Este apelido já está em uso. Escolha outro!");
-                return;
+            try {
+                const creds = await createUserWithEmailAndPassword(auth, email, pass);
+                userProfile = { nickname: nick, weight: weight, height: height };
+                completedSets = {};
+                waterMl = 0;
+                
+                const userDocRef = doc(db, 'artifacts', appId, 'users', creds.user.uid, 'data', 'profile');
+                await setDoc(userDocRef, {
+                    nickname: nick,
+                    weight: weight,
+                    height: height,
+                    completedSets: {},
+                    waterMl: 0,
+                    createdAt: Date.now()
+                });
+            } catch (err) {
+                alert.textContent = "Erro no cadastro: E-mail já em uso ou senha fraca.";
+                alert.classList.remove('hidden');
+            }
+        };
+
+        // GUEST LOGIN
+        window.handleAnonymousLogin = async function() {
+            try {
+                await signInAnonymously(auth);
+            } catch (err) {
+                console.error("Guest mode error:", err);
+            }
+        };
+
+        // LOGOUT HANDLER
+        window.handleLogout = async function() {
+            try {
+                await signOut(auth);
+            } catch (err) {
+                console.error("Logout error:", err);
+            }
+        };
+
+        // UI RENDERING
+        function updateUI() {
+            if (!userProfile) return;
+            
+            document.getElementById('userWelcome').textContent = `Bora treinar, ${userProfile.nickname}!`;
+            document.getElementById('profileNameDisplay').textContent = userProfile.nickname;
+            document.getElementById('profileUserEmail').textContent = currentUser?.email || 'Modo Convidado';
+            document.getElementById('profileWeightDisplay').textContent = `${userProfile.weight} kg`;
+            document.getElementById('profileHeightDisplay').textContent = `${userProfile.height} cm`;
+
+            if (userProfile.weight && userProfile.height) {
+                const heightM = userProfile.height / 100;
+                const imc = (userProfile.weight / (heightM * heightM)).toFixed(1);
+                document.getElementById('profileImcDisplay').textContent = imc;
             }
 
-            db[nick.toLowerCase()] = {
-                password: pass,
-                profile: { nickname: nick, weight: weight, height: height },
-                completedSets: {},
-                waterMl: 0,
-                history: []
-            };
-
-            saveUsersDB(db);
-            loginUserSession(nick.toLowerCase());
-        }
-
-        // LOGIN
-        function handleLogin(e) {
-            e.preventDefault();
-            const nick = document.getElementById('loginUser').value.trim().toLowerCase();
-            const pass = document.getElementById('loginPass').value;
-
-            const db = getUsersDB();
-            if (!db[nick] || db[nick].password !== pass) {
-                alert("Apelido ou senha incorretos!");
-                return;
-            }
-
-            loginUserSession(nick);
-        }
-
-        function guestLogin() {
-            const nick = "convidado_" + Math.floor(Math.random() * 1000);
-            const db = getUsersDB();
-            db[nick] = {
-                password: 'guest',
-                profile: { nickname: 'Convidado', weight: 70, height: 170 },
-                completedSets: {},
-                waterMl: 0,
-                history: []
-            };
-            saveUsersDB(db);
-            loginUserSession(nick);
-        }
-
-        function loginUserSession(usernameKey) {
-            currentUser = usernameKey;
-            localStorage.setItem('7ks_active_user', currentUser);
-            loadUserData();
-            document.getElementById('authModal').classList.add('hidden');
-        }
-
-        function logout() {
-            localStorage.removeItem('7ks_active_user');
-            location.reload();
-        }
-
-        function loadUserData() {
-            const db = getUsersDB();
-            const userData = db[currentUser];
-            if (!userData) return;
-
-            completedSets = userData.completedSets || {};
-            waterMl = userData.waterMl || 0;
-            workoutHistory = userData.history || [];
-
-            updateProfileDisplay(userData.profile);
             renderExercises();
             updateProgress();
             updateWaterDisplay();
-            renderHistory();
         }
 
-        function syncUserData() {
-            if (!currentUser) return;
-            const db = getUsersDB();
-            if (db[currentUser]) {
-                db[currentUser].completedSets = completedSets;
-                db[currentUser].waterMl = waterMl;
-                db[currentUser].history = workoutHistory;
-                saveUsersDB(db);
-            }
-        }
-
-        function updateProfileDisplay(prof) {
-            if (!prof) return;
-            document.getElementById('userWelcome').textContent = `Bora treinar, ${prof.nickname}!`;
-            document.getElementById('profileNameDisplay').textContent = prof.nickname;
-            document.getElementById('profileWeightDisplay').textContent = `${prof.weight} kg`;
-            document.getElementById('profileHeightDisplay').textContent = `${prof.height} cm`;
-
-            if (prof.weight && prof.height) {
-                const heightM = prof.height / 100;
-                const imc = (prof.weight / (heightM * heightM)).toFixed(1);
-                document.getElementById('profileImcDisplay').textContent = imc;
-            }
-        }
-
-        // RENDERIZAR EXERCÍCIOS
         function renderExercises() {
             const container = document.getElementById('exerciseList');
             container.innerHTML = '';
@@ -628,8 +747,9 @@
                                 <h3 class="font-display font-extrabold text-lg text-white leading-snug">${ex.name}</h3>
                                 <p class="text-xs font-semibold text-brand-purpleLight">${ex.meta}</p>
                             </div>
-                            <button onclick="openExerciseModal('${ex.id}')" class="text-[10px] font-bold bg-brand-purple/30 border border-brand-purple/50 hover:bg-brand-purple text-white px-2.5 py-1.5 rounded-lg flex items-center gap-1 backdrop-blur-md">
-                                <i class="fa-solid fa-circle-play text-brand-purpleLight"></i> Como executar
+                            <button onclick="openTutorialModal('${ex.id}')" class="bg-brand-purple/80 hover:bg-brand-purple text-white text-[11px] font-bold px-3 py-1.5 rounded-xl border border-brand-purpleLight/50 flex items-center gap-1.5 shadow-md active:scale-95 transition backdrop-blur-md">
+                                <i class="fa-solid fa-circle-play text-xs"></i>
+                                Como executar
                             </button>
                         </div>
                     </div>
@@ -646,12 +766,61 @@
             });
         }
 
-        // TOGGLE DA SÉRIE
-        function toggleSet(exerciseId, setNum) {
+        window.openTutorialModal = function(exerciseId) {
+            const ex = exercises.find(e => e.id === exerciseId);
+            if (!ex) return;
+
+            document.getElementById('modalTitle').textContent = `Como Executar: ${ex.name}`;
+            document.getElementById('modalVideoIframe').src = `https://www.youtube.com/embed/${ex.youtubeId}?autoplay=1&rel=0`;
+
+            const container = document.getElementById('modalInstructions');
+            container.innerHTML = '';
+            ex.steps.forEach((step, idx) => {
+                const stepEl = document.createElement('div');
+                stepEl.className = "flex items-start gap-2 bg-black/40 p-2.5 rounded-xl border border-white/5";
+                stepEl.innerHTML = `
+                    <span class="w-5 h-5 rounded-full bg-brand-purple/20 text-brand-purpleLight font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">${idx + 1}</span>
+                    <p class="text-xs text-gray-300 leading-snug">${step}</p>
+                `;
+                container.appendChild(stepEl);
+            });
+
+            document.getElementById('tutorialModal').classList.remove('hidden');
+        };
+
+        window.closeTutorialModal = function() {
+            document.getElementById('tutorialModal').classList.add('hidden');
+            document.getElementById('modalVideoIframe').src = '';
+        };
+
+        window.openProfileEditModal = function() {
+            if (userProfile) {
+                document.getElementById('editNickname').value = userProfile.nickname || '';
+                document.getElementById('editWeight').value = userProfile.weight || '';
+                document.getElementById('editHeight').value = userProfile.height || '';
+            }
+            document.getElementById('profileEditModal').classList.remove('hidden');
+        };
+
+        window.closeProfileEditModal = function() {
+            document.getElementById('profileEditModal').classList.add('hidden');
+        };
+
+        window.updateProfileInCloud = async function(e) {
+            e.preventDefault();
+            userProfile.nickname = document.getElementById('editNickname').value.trim();
+            userProfile.weight = parseFloat(document.getElementById('editWeight').value);
+            userProfile.height = parseFloat(document.getElementById('editHeight').value);
+
+            await saveUserDataToCloud();
+            closeProfileEditModal();
+        };
+
+        window.toggleSet = function(exerciseId, setNum) {
             const key = `${exerciseId}_set_${setNum}`;
             completedSets[key] = !completedSets[key];
 
-            syncUserData();
+            saveUserDataToCloud();
 
             const btn = document.getElementById(`btn_${key}`);
             if (completedSets[key]) {
@@ -662,33 +831,8 @@
             }
 
             updateProgress();
-        }
+        };
 
-        // MODAL DE EXECUÇÃO
-        function openExerciseModal(exerciseId) {
-            const ex = exercises.find(item => item.id === exerciseId);
-            if (!ex) return;
-
-            document.getElementById('modalExerciseTitle').textContent = `Como executar: ${ex.name}`;
-            document.getElementById('modalVideoFrame').src = ex.videoUrl;
-
-            const stepsList = document.getElementById('modalStepsList');
-            stepsList.innerHTML = '';
-            ex.steps.forEach(step => {
-                const li = document.createElement('li');
-                li.textContent = step;
-                stepsList.appendChild(li);
-            });
-
-            document.getElementById('exerciseModal').classList.remove('hidden');
-        }
-
-        function closeExerciseModal() {
-            document.getElementById('exerciseModal').classList.add('hidden');
-            document.getElementById('modalVideoFrame').src = '';
-        }
-
-        // CRONÔMETRO DE DESCANSO
         function startRestTimer() {
             clearInterval(timerInterval);
             timerTimeLeft = 60;
@@ -714,12 +858,11 @@
             }, 1000);
         }
 
-        function skipTimer() {
+        window.skipTimer = function() {
             clearInterval(timerInterval);
             document.getElementById('timerContainer').classList.add('hidden');
-        }
+        };
 
-        // BARRA DE PROGRESSO
         function updateProgress() {
             let totalSets = 0;
             exercises.forEach(ex => totalSets += ex.sets);
@@ -731,29 +874,26 @@
             document.getElementById('progressText').textContent = `${percent}%`;
         }
 
-        // ÁGUA
-        function addWater(amount) {
+        window.addWater = function(amount) {
             waterMl = Math.max(0, waterMl + amount);
-            syncUserData();
+            saveUserDataToCloud();
             updateWaterDisplay();
-        }
+        };
 
         function updateWaterDisplay() {
             document.getElementById('waterCount').textContent = `${waterMl} ml`;
         }
 
-        // RESETAR TREINO
-        function resetWorkout() {
+        window.resetWorkout = function() {
             if (confirm("Tem certeza que deseja resetar os checks deste treino?")) {
                 completedSets = {};
-                syncUserData();
+                saveUserDataToCloud();
                 renderExercises();
                 updateProgress();
             }
-        }
+        };
 
-        // SALVAR TREINO
-        function finishWorkout() {
+        window.finishWorkout = async function() {
             let totalSets = 0;
             exercises.forEach(ex => totalSets += ex.sets);
             let doneCount = Object.values(completedSets).filter(Boolean).length;
@@ -769,9 +909,9 @@
             const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
             const record = {
-                id: Date.now(),
                 date: dateStr,
                 time: timeStr,
+                timestamp: Date.now(),
                 percent: percent,
                 doneSets: doneCount,
                 totalSets: totalSets,
@@ -779,15 +919,15 @@
                 note: ''
             };
 
-            workoutHistory.unshift(record);
-            syncUserData();
+            if (currentUser) {
+                const historyCollRef = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'history');
+                await addDoc(historyCollRef, record);
+            }
 
-            renderHistory();
             switchTab('progress');
-            alert("Treino salvo com sucesso no seu Histórico!");
-        }
+            alert("Treino salvo na Nuvem com sucesso!");
+        };
 
-        // HISTÓRICO
         function renderHistory() {
             const container = document.getElementById('historyList');
             document.getElementById('historyCount').textContent = `${workoutHistory.length} treinos salvos`;
@@ -795,8 +935,8 @@
             if (workoutHistory.length === 0) {
                 container.innerHTML = `
                     <div class="bg-brand-card border border-white/5 rounded-2xl p-6 text-center text-brand-textMuted">
-                        <i class="fa-solid fa-calendar-xmark text-2xl mb-2 text-brand-purple"></i>
-                        <p class="text-xs">Nenhum treino salvo ainda. Conclua seu treino na aba principal!</p>
+                        <i class="fa-solid fa-cloud-arrow-up text-2xl mb-2 text-brand-purple"></i>
+                        <p class="text-xs">Nenhum treino salvo na nuvem ainda. Conclua seu primeiro treino!</p>
                     </div>
                 `;
                 return;
@@ -817,7 +957,7 @@
                             <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-brand-purple/20 text-brand-purple border border-brand-purple/30">
                                 ${item.percent}% Concluído
                             </span>
-                            <button onclick="deleteHistory(${item.id})" class="text-brand-textMuted hover:text-red-400 text-xs">
+                            <button onclick="deleteHistoryItem('${item.id}')" class="text-brand-textMuted hover:text-red-400 text-xs">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>
@@ -834,7 +974,7 @@
                         </div>
                     ` : ''}
 
-                    <button onclick="editNote(${item.id})" class="text-[10px] text-brand-purpleLight flex items-center gap-1 mt-1 font-semibold">
+                    <button onclick="editHistoryNote('${item.id}')" class="text-[10px] text-brand-purpleLight flex items-center gap-1 mt-1 font-semibold">
                         <i class="fa-solid fa-pen"></i> ${item.note ? 'Editar Anotação' : '+ Adicionar Anotação'}
                     </button>
                 `;
@@ -842,28 +982,26 @@
             });
         }
 
-        function editNote(id) {
-            const item = workoutHistory.find(h => h.id === id);
-            if (!item) return;
+        window.editHistoryNote = async function(docId) {
+            const item = workoutHistory.find(h => h.id === docId);
+            if (!item || !currentUser) return;
 
-            const newNote = prompt("Adicione observações para este treino:", item.note || "");
+            const newNote = prompt("Adicione observações para este treino na nuvem:", item.note || "");
             if (newNote !== null) {
-                item.note = newNote.trim();
-                syncUserData();
-                renderHistory();
+                const docRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'history', docId);
+                await updateDoc(docRef, { note: newNote.trim() });
             }
-        }
+        };
 
-        function deleteHistory(id) {
-            if (confirm("Apagar este registro do histórico?")) {
-                workoutHistory = workoutHistory.filter(h => h.id !== id);
-                syncUserData();
-                renderHistory();
+        window.deleteHistoryItem = async function(docId) {
+            if (!currentUser) return;
+            if (confirm("Deseja apagar este registro do histórico na nuvem?")) {
+                const docRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'history', docId);
+                await deleteDoc(docRef);
             }
-        }
+        };
 
-        // TROCA DE ABAS
-        function switchTab(tab) {
+        window.switchTab = function(tab) {
             const workoutSection = document.getElementById('tabWorkout');
             const progressSection = document.getElementById('tabProgress');
             const navWorkout = document.getElementById('navWorkout');
@@ -880,7 +1018,9 @@
                 navWorkout.className = "flex flex-col items-center space-y-1 text-brand-textMuted";
                 navProgress.className = "flex flex-col items-center space-y-1 text-brand-purple";
             }
-        }
+        };
+
+        initAuth();
     </script>
 </body>
 </html>
