@@ -281,11 +281,22 @@
 
     <script>
         // CONFIGURAÇÃO SUPABASE
-        const SUPABASE_URL = 'https://llqrvogydcnxsgnuaqeq.supabase.co';[span_0](start_span)[span_0](end_span)
-        const SUPABASE_KEY = 'Sb_publishable_65kB7qIQ6nc45ZerxhMTwA_6Ww1kWWQ';
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        var SUPABASE_URL = 'https://llqrvogydcnxsgnuaqeq.supabase.co';[span_0](start_span)[span_0](end_span)
+        var SUPABASE_KEY = 'Sb_publishable_65kB7qIQ6nc45ZerxhMTwA_6Ww1kWWQ';
+        var _supabase = null;
 
-        const exercises = [
+        function getSupabaseClient() {
+            if (!_supabase) {
+                if (window.supabase) {
+                    _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                } else {
+                    console.error("SDK do Supabase ainda não carregou.");
+                }
+            }
+            return _supabase;
+        }
+
+        var exercises = [
             {
                 id: 'flexoes',
                 name: 'Flexões',
@@ -408,14 +419,14 @@
             }
         ];
 
-        let currentUser = null;
-        let userProfile = null;
-        let completedSets = {};
-        let waterMl = 0;
-        let workoutHistory = [];
+        var currentUser = null;
+        var userProfile = null;
+        var completedSets = {};
+        var waterMl = 0;
+        var workoutHistory = [];
 
-        let timerInterval = null;
-        let timerTimeLeft = 60;
+        var timerInterval = null;
+        var timerTimeLeft = 60;
 
         document.addEventListener('DOMContentLoaded', () => {
             const activeUser = localStorage.getItem('7ks_supabase_active_user');
@@ -449,9 +460,15 @@
 
         async function handleRegister(e) {
             e.preventDefault();
+            const client = getSupabaseClient();
+            if (!client) {
+                alert("Servidor desconectado. Aguarde alguns segundos e tente novamente.");
+                return;
+            }
+
             const btn = document.getElementById('btnRegSubmit');
             btn.disabled = true;
-            btn.innerText = "A CRIAR CONTA...";
+            btn.innerText = "CRIANDO CONTA...";
 
             const nick = document.getElementById('regNick').value.trim();
             const pass = document.getElementById('regPass').value;
@@ -459,21 +476,19 @@
             const height = parseInt(document.getElementById('regHeight').value);
 
             try {
-                const { data: existing, error: searchErr } = await _supabase
+                const { data: existing } = await client
                     .from('usuarios')
                     .select('id')
                     .eq('apelido', nick.toLowerCase());
 
                 if (existing && existing.length > 0) {
                     alert("Este apelido já está em uso! Tente outro.");
-                    btn.disabled = false;
-                    btn.innerText = "CRIAR CONTA & SALVAR NA NUVEM";
                     return;
                 }
 
                 const initialData = { completedSets: {}, waterMl: 0, history: [] };
 
-                const { error } = await _supabase
+                const { error } = await client
                     .from('usuarios')
                     .insert([
                         {
@@ -504,32 +519,38 @@
 
         async function handleLogin(e) {
             e.preventDefault();
+            const client = getSupabaseClient();
+            if (!client) {
+                alert("Servidor desconectado. Aguarde alguns segundos e tente novamente.");
+                return;
+            }
+
             const btn = document.getElementById('btnLoginSubmit');
             btn.disabled = true;
-            btn.innerText = "A ENTRAR...";
+            btn.innerText = "ENTRANDO...";
 
             const nick = document.getElementById('loginUser').value.trim().toLowerCase();
             const pass = document.getElementById('loginPass').value;
 
             try {
-                const { data, error } = await _supabase
+                const { data, error } = await client
                     .from('usuarios')
                     .select('*')
                     .eq('apelido', nick);
 
                 if (error) {
-                    alert("Erro ao ligar ao servidor: " + error.message);
+                    alert("Erro de conexão: " + error.message);
                     return;
                 }
 
                 if (!data || data.length === 0) {
-                    alert("Conta não encontrada! Alterne para a aba 'Criar Conta' primeiro.");
+                    alert("Conta não encontrada! Clique em 'Criar Conta' primeiro.");
                     return;
                 }
 
                 const user = data[0];
                 if (user.senha !== pass) {
-                    alert("Palavra-passe incorreta!");
+                    alert("Senha incorreta!");
                     return;
                 }
 
@@ -548,7 +569,10 @@
 
         async function loadFromCloud() {
             if (!currentUser) return;
-            const { data } = await _supabase
+            const client = getSupabaseClient();
+            if (!client) return;
+
+            const { data } = await client
                 .from('usuarios')
                 .select('*')
                 .eq('apelido', currentUser);
@@ -574,7 +598,10 @@
 
         async function syncDataToCloud() {
             if (!currentUser) return;
-            await _supabase
+            const client = getSupabaseClient();
+            if (!client) return;
+
+            await client
                 .from('usuarios')
                 .update({
                     dados_treino: {
