@@ -10,8 +10,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Font: Inter & Montserrat -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
-    <!-- SUPABASE JS SDK OFFICIAL -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- SUPABASE JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -273,11 +273,19 @@
     <audio id="beepSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
     <script>
-        var SUPABASE_URL = 'https://llqrvogydcnxsgnuaqeq.supabase.co';[span_1](start_span)[span_1](end_span)
+        var SUPABASE_URL = 'https://llqrvogydcnxsgnuaqeq.supabase.co';[span_0](start_span)[span_0](end_span)
         var SUPABASE_KEY = 'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxscXJ2b2d5ZGNueHNnbnVhcWVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NjYyNzcsImV4cCI6MjEwNjI0MjI3N30.Q09SLFqCbAUtdXMm1PkTUEhZRUWBCulrEPbfKLdfWjM';
 
-        // Cliente Oficial do Supabase
-        var supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // Obter cliente do Supabase com verificação de segurança
+        function getSupabase() {
+            if (window.supabase && window.supabase.createClient) {
+                return window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            }
+            if (window.supabaseClient) {
+                return window.supabaseClient;
+            }
+            return null;
+        }
 
         var exercises = [
             { id: 'flexoes', name: 'Flexões', meta: '5×10 (50 repetições)', sets: 5, targets: 'Peitoral, tríceps, ombros e core.', img: 'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/iod3sACpL4w', steps: ['Mãos na largura dos ombros.', 'Corpo reto.', 'Desça até quase tocar o chão.', 'Empurre de volta.'] },
@@ -340,8 +348,16 @@
             var weight = parseFloat(document.getElementById('regWeight').value);
             var height = parseInt(document.getElementById('regHeight').value);
 
+            var client = getSupabase();
+            if (!client) {
+                alert("Erro ao carregar o Supabase. Recarregue a página e tente novamente.");
+                btn.disabled = false;
+                btn.innerText = "CRIAR CONTA & SALVAR NA NUVEM";
+                return;
+            }
+
             try {
-                const { data: check, error: checkErr } = await supabaseClient
+                const { data: check, error: checkErr } = await client
                     .from('usuarios')
                     .select('*')
                     .eq('apelido', nick);
@@ -355,7 +371,7 @@
                     return;
                 }
 
-                const { data: insert, error: insertErr } = await supabaseClient
+                const { data: insert, error: insertErr } = await client
                     .from('usuarios')
                     .insert([{
                         apelido: nick,
@@ -393,8 +409,16 @@
             var nick = document.getElementById('loginUser').value.trim().toLowerCase();
             var pass = document.getElementById('loginPass').value;
 
+            var client = getSupabase();
+            if (!client) {
+                alert("Erro ao carregar o Supabase. Recarregue a página.");
+                btn.disabled = false;
+                btn.innerText = "ENTRAR NA CONTA";
+                return;
+            }
+
             try {
-                const { data: users, error } = await supabaseClient
+                const { data: users, error } = await client
                     .from('usuarios')
                     .select('*')
                     .eq('apelido', nick);
@@ -431,8 +455,11 @@
 
         async function loadFromCloud() {
             if (!currentUser) return;
+            var client = getSupabase();
+            if (!client) return;
+
             try {
-                const { data: users, error } = await supabaseClient
+                const { data: users, error } = await client
                     .from('usuarios')
                     .select('*')
                     .eq('apelido', currentUser);
@@ -459,8 +486,11 @@
 
         async function syncDataToCloud() {
             if (!currentUser) return;
+            var client = getSupabase();
+            if (!client) return;
+
             try {
-                await supabaseClient
+                await client
                     .from('usuarios')
                     .update({
                         dados_treino: {
