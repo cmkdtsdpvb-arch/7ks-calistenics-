@@ -100,11 +100,11 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-[10px] font-semibold uppercase tracking-wider text-brand-textMuted mb-1">Peso (kg)</label>
-                        <input type="number" step="0.1" id="regWeight" required placeholder="Ex: 94" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple transition text-sm">
+                        <input type="number" step="0.1" id="regWeight" required placeholder="Ex: 80" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple transition text-sm">
                     </div>
                     <div>
                         <label class="block text-[10px] font-semibold uppercase tracking-wider text-brand-textMuted mb-1">Altura (cm)</label>
-                        <input type="number" id="regHeight" required placeholder="Ex: 190" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple transition text-sm">
+                        <input type="number" id="regHeight" required placeholder="Ex: 180" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple transition text-sm">
                     </div>
                 </div>
                 <button id="btnRegSubmit" type="submit" class="w-full mt-2 bg-brand-purple hover:bg-brand-purpleDark active:scale-95 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-brand-purple/30 text-sm">
@@ -278,28 +278,37 @@
     <audio id="beepSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
     <script>
-        var SUPABASE_URL = 'https://llqrvogydcnxsgnuaqeq.supabase.co';[span_2](start_span)[span_2](end_span)
+        var SUPABASE_URL = 'https://llqrvogydcnxsgnuaqeq.supabase.co';[span_1](start_span)[span_1](end_span)
         var SUPABASE_KEY = 'Sb_publishable_65kB7qIQ6nc45ZerxhMTwA_6Ww1kWWQ';
 
-        // Requisição HTTP REST Nativa (Garante compatibilidade total com a chave sb_publishable)
-        async function supabaseAPI(path, options = {}) {
-            const url = `${SUPABASE_URL}/rest/v1/${path}`;
-            const headers = {
-                'apikey': SUPABASE_KEY,
-                'Authorization': `Bearer ${SUPABASE_KEY}`,
-                'Content-Type': 'application/json',
-                'Prefer': options.prefer || 'return=representation',
-                ...(options.headers || {})
-            };
+        // Chamada direta à REST API do Supabase compatível com chaves sb_publishable
+        async function supabaseRequest(path, options = {}) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 6000);
 
             try {
-                const response = await fetch(url, { ...options, headers });
-                const text = await response.text();
-                let data = null;
-                try { data = JSON.parse(text); } catch (e) { data = text; }
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+                    ...options,
+                    signal: controller.signal,
+                    headers: {
+                        'apiKey': SUPABASE_KEY,
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': options.prefer || 'return=representation',
+                        ...(options.headers || {})
+                    }
+                });
+                clearTimeout(timeoutId);
+                const data = await response.json().catch(() => null);
                 return { ok: response.ok, status: response.status, data };
             } catch (err) {
-                return { ok: false, status: 0, data: err.message };
+                clearTimeout(timeoutId);
+                return { 
+                    ok: false, 
+                    status: 0, 
+                    data: { message: err.name === 'AbortError' ? 'Servidor demorou a responder.' : err.message } 
+                };
             }
         }
 
@@ -366,7 +375,7 @@
 
             try {
                 // 1. Verificar se utilizador já existe
-                const check = await supabaseAPI(`usuarios?apelido=eq.${encodeURIComponent(nick.toLowerCase())}`);
+                const check = await supabaseRequest(`usuarios?apelido=eq.${encodeURIComponent(nick.toLowerCase())}`);
                 
                 if (check.ok && check.data && check.data.length > 0) {
                     alert("Este apelido já está em uso! Escolha outro.");
@@ -375,8 +384,8 @@
                     return;
                 }
 
-                // 2. Inserir novo registo
-                const insert = await supabaseAPI('usuarios', {
+                // 2. Criar utilizador
+                const insert = await supabaseRequest('usuarios', {
                     method: 'POST',
                     body: JSON.stringify({
                         apelido: nick.toLowerCase(),
@@ -391,8 +400,8 @@
                 btn.innerText = "CRIAR CONTA & SALVAR NA NUVEM";
 
                 if (!insert.ok) {
-                    const msg = insert.data && insert.data.message ? insert.data.message : JSON.stringify(insert.data);
-                    alert("Erro do Supabase: " + msg);
+                    var errorMsg = (insert.data && insert.data.message) ? insert.data.message : JSON.stringify(insert.data);
+                    alert("Mensagem do Servidor: " + errorMsg);
                 } else {
                     alert("Conta criada com sucesso na nuvem!");
                     currentUser = nick.toLowerCase();
@@ -403,7 +412,7 @@
             } catch (err) {
                 btn.disabled = false;
                 btn.innerText = "CRIAR CONTA & SALVAR NA NUVEM";
-                alert("Erro de ligação: " + err.message);
+                alert("Falha de ligação: " + err.message);
             }
         }
 
@@ -417,13 +426,13 @@
             var pass = document.getElementById('loginPass').value;
 
             try {
-                const res = await supabaseAPI(`usuarios?apelido=eq.${encodeURIComponent(nick)}`);
+                const res = await supabaseRequest(`usuarios?apelido=eq.${encodeURIComponent(nick)}`);
                 btn.disabled = false;
                 btn.innerText = "ENTRAR NA CONTA";
 
                 if (!res.ok) {
-                    const msg = res.data && res.data.message ? res.data.message : JSON.stringify(res.data);
-                    alert("Erro de ligação: " + msg);
+                    var errorMsg = (res.data && res.data.message) ? res.data.message : JSON.stringify(res.data);
+                    alert("Erro: " + errorMsg);
                     return;
                 }
 
@@ -452,7 +461,7 @@
         async function loadFromCloud() {
             if (!currentUser) return;
             try {
-                const res = await supabaseAPI(`usuarios?apelido=eq.${encodeURIComponent(currentUser)}`);
+                const res = await supabaseRequest(`usuarios?apelido=eq.${encodeURIComponent(currentUser)}`);
                 if (res.ok && res.data && res.data.length > 0) {
                     applyUserData(res.data[0]);
                 }
@@ -476,7 +485,7 @@
         async function syncDataToCloud() {
             if (!currentUser) return;
             try {
-                await supabaseAPI(`usuarios?apelido=eq.${encodeURIComponent(currentUser)}`, {
+                await supabaseRequest(`usuarios?apelido=eq.${encodeURIComponent(currentUser)}`, {
                     method: 'PATCH',
                     body: JSON.stringify({
                         dados_treino: {
@@ -758,7 +767,7 @@
 
         function deleteHistory(id) {
             if (confirm("Apagar este registro do histórico?")) {
-                workoutHistory = workoutHistory.filter(function(h) { return h.id !== id; });
+                workoutHistory = workoutHistory.filter(function(h) { return h.id === id; });
                 renderHistory();
                 syncDataToCloud();
             }
