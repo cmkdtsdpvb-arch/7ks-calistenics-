@@ -176,7 +176,7 @@
             <div class="bg-brand-card border border-white/10 rounded-2xl p-4 relative overflow-hidden">
                 <div class="flex justify-between items-start mb-2">
                     <div>
-                        <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-brand-purple/20 text-brand-purpleLight border border-brand-purple/30 mb-1">TREINO ATUAL</span>
+                        <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-brand-purple/20 text-brand-purpleLight border border-brand-purple/30 mb-1">TREINO BASE</span>
                         <h2 class="text-xl font-display font-extrabold text-white">Treino Básico Calistenia</h2>
                     </div>
                     <button type="button" onclick="resetWorkout()" class="text-brand-textMuted hover:text-red-400 text-xs flex items-center gap-1 bg-black/40 px-2.5 py-1.5 rounded-lg border border-white/5">
@@ -213,16 +213,8 @@
                 </div>
             </div>
 
-            <!-- EXERCÍCIOS -->
+            <!-- EXERCÍCIOS PADRÃO -->
             <div id="exerciseList" class="space-y-4"></div>
-
-            <!-- EXERCÍCIOS PERSONALIZADOS DO UTILIZADOR -->
-            <div id="customExercisesSection" class="space-y-4 hidden">
-                <div class="border-t border-white/10 pt-4 mt-4">
-                    <h3 class="font-display font-bold text-base text-brand-purpleLight mb-2"><i class="fa-solid fa-star mr-1"></i> Seus Treinos Personalizados</h3>
-                </div>
-                <div id="customExerciseList" class="space-y-4"></div>
-            </div>
 
             <div class="pt-2 pb-6">
                 <button type="button" onclick="finishWorkout()" class="w-full bg-gradient-to-r from-brand-purpleDark to-brand-purple hover:opacity-90 active:scale-95 text-white font-display font-bold py-4 rounded-2xl transition shadow-lg shadow-brand-purple/25 flex items-center justify-center gap-2">
@@ -264,20 +256,24 @@
                         <input type="text" id="customTargets" required placeholder="Ex: Tríceps e peitoral" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple transition text-sm">
                     </div>
                     <button type="submit" class="w-full mt-2 bg-brand-purple hover:bg-brand-purpleDark active:scale-95 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-brand-purple/30 text-sm flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-plus"></i> ADICIONAR AO MEU TREINO
+                        <i class="fa-solid fa-plus"></i> SALVAR NO TREINO PERSONALIZADO
                     </button>
                 </form>
             </div>
-
-            <div class="flex items-center justify-between pt-2">
-                <h3 class="font-display font-bold text-base text-white">Seus Exercícios Criados</h3>
-                <span id="customCountBadge" class="text-xs text-brand-textMuted">0 criados</span>
-            </div>
-
-            <div id="builderList" class="space-y-3"></div>
         </section>
 
-        <!-- ABA 3: PROGRESSO / HISTÓRICO -->
+        <!-- ABA 3: TREINO PERSONALIZADO -->
+        <section id="tabCustomWorkout" class="space-y-4 hidden">
+            <div class="bg-brand-card border border-brand-purple/40 rounded-2xl p-4 relative overflow-hidden purple-glow">
+                <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-brand-purple/20 text-brand-purpleLight border border-brand-purple/30 mb-1">EXCLUSIVO</span>
+                <h2 class="text-xl font-display font-extrabold text-white">Treino Personalizado</h2>
+                <p class="text-xs text-brand-textMuted mt-1">Aqui estão todos os exercícios que você criou e sincronizou na nuvem.</p>
+            </div>
+
+            <div id="customExerciseList" class="space-y-4"></div>
+        </section>
+
+        <!-- ABA 4: PROGRESSO / HISTÓRICO -->
         <section id="tabProgress" class="space-y-4 hidden">
             <div class="bg-brand-card border border-white/10 rounded-2xl p-4 relative overflow-hidden">
                 <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-3">
@@ -333,19 +329,23 @@
     </div>
 
     <!-- NAVEGAÇÃO INFERIOR -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-brand-black/95 backdrop-blur-lg border-t border-white/10 px-6 py-2.5 z-40">
+    <nav class="fixed bottom-0 left-0 right-0 bg-brand-black/95 backdrop-blur-lg border-t border-white/10 px-4 py-2.5 z-40">
         <div class="max-w-md mx-auto flex justify-around">
             <button type="button" onclick="switchTab('workout')" id="navWorkout" class="flex flex-col items-center space-y-1 text-brand-purple">
-                <i class="fa-solid fa-dumbbell text-lg"></i>
-                <span class="text-[10px] font-bold">Treino</span>
+                <i class="fa-solid fa-dumbbell text-base"></i>
+                <span class="text-[9px] font-bold">Treino</span>
             </button>
             <button type="button" onclick="switchTab('builder')" id="navBuilder" class="flex flex-col items-center space-y-1 text-brand-textMuted">
-                <i class="fa-solid fa-hammer text-lg"></i>
-                <span class="text-[10px] font-bold">Montar</span>
+                <i class="fa-solid fa-hammer text-base"></i>
+                <span class="text-[9px] font-bold">Montar</span>
+            </button>
+            <button type="button" onclick="switchTab('customWorkout')" id="navCustomWorkout" class="flex flex-col items-center space-y-1 text-brand-textMuted">
+                <i class="fa-solid fa-star text-base"></i>
+                <span class="text-[9px] font-bold">Personalizado</span>
             </button>
             <button type="button" onclick="switchTab('progress')" id="navProgress" class="flex flex-col items-center space-y-1 text-brand-textMuted">
-                <i class="fa-solid fa-chart-line text-lg"></i>
-                <span class="text-[10px] font-bold">Progresso</span>
+                <i class="fa-solid fa-chart-line text-base"></i>
+                <span class="text-[9px] font-bold">Progresso</span>
             </button>
         </div>
     </nav>
@@ -592,38 +592,31 @@
             customExercises.push(newEx);
             syncDataToCloud();
             renderCustomExercises();
-            renderExercises();
 
             document.getElementById('customName').value = '';
             document.getElementById('customSets').value = '4';
             document.getElementById('customMeta').value = '';
             document.getElementById('customTargets').value = '';
 
-            switchTab('workout');
-            alert("Exercício criado e adicionado ao seu treino com sucesso!");
+            switchTab('customWorkout');
+            alert("Exercício criado e salvo na aba Treino Personalizado!");
         }
 
         function renderCustomExercises() {
             var container = document.getElementById('customExerciseList');
-            var builderList = document.getElementById('builderList');
-            var section = document.getElementById('customExercisesSection');
-
-            document.getElementById('customCountBadge').textContent = `${customExercises.length} criados`;
 
             if (customExercises.length === 0) {
-                section.classList.add('hidden');
-                builderList.innerHTML = `
-                    <div class="bg-brand-card border border-white/5 rounded-2xl p-6 text-center text-brand-textMuted">
-                        <i class="fa-solid fa-hammer text-2xl mb-2 text-brand-purple"></i>
+                container.innerHTML = `
+                    <div class="bg-brand-card border border-white/5 rounded-2xl p-8 text-center text-brand-textMuted">
+                        <i class="fa-solid fa-star text-3xl mb-3 text-brand-purple"></i>
                         <p class="text-xs">Nenhum exercício personalizado criado ainda.</p>
+                        <p class="text-[10px] text-brand-textMuted mt-1">Vá na aba "Montar" para adicionar os seus próprios treinos!</p>
                     </div>
                 `;
                 return;
             }
 
-            section.classList.remove('hidden');
             container.innerHTML = '';
-            builderList.innerHTML = '';
 
             customExercises.forEach(function(ex) {
                 var card = document.createElement('div');
@@ -665,19 +658,6 @@
                     </div>
                 `;
                 container.appendChild(card);
-
-                var builderCard = document.createElement('div');
-                builderCard.className = "bg-brand-card border border-white/10 rounded-2xl p-4 flex items-center justify-between";
-                builderCard.innerHTML = `
-                    <div>
-                        <h4 class="font-display font-bold text-sm text-white">${ex.name}</h4>
-                        <p class="text-xs text-brand-textMuted">${ex.meta} • ${ex.targets}</p>
-                    </div>
-                    <button type="button" onclick="deleteCustomExercise('${ex.id}')" class="text-xs text-red-400 bg-red-500/10 border border-red-500/20 px-3 py-1.5 rounded-xl hover:bg-red-500/20">
-                        <i class="fa-solid fa-trash mr-1"></i> Apagar
-                    </button>
-                `;
-                builderList.appendChild(builderCard);
             });
         }
 
@@ -689,7 +669,6 @@
                 });
                 syncDataToCloud();
                 renderCustomExercises();
-                renderExercises();
                 updateProgress();
             }
         }
@@ -913,18 +892,22 @@
         function switchTab(tab) {
             var workoutSection = document.getElementById('tabWorkout');
             var builderSection = document.getElementById('tabBuilder');
+            var customWorkoutSection = document.getElementById('tabCustomWorkout');
             var progressSection = document.getElementById('tabProgress');
             
             var navWorkout = document.getElementById('navWorkout');
             var navBuilder = document.getElementById('navBuilder');
+            var navCustomWorkout = document.getElementById('navCustomWorkout');
             var navProgress = document.getElementById('navProgress');
 
             workoutSection.classList.add('hidden');
             builderSection.classList.add('hidden');
+            customWorkoutSection.classList.add('hidden');
             progressSection.classList.add('hidden');
 
             navWorkout.className = "flex flex-col items-center space-y-1 text-brand-textMuted";
             navBuilder.className = "flex flex-col items-center space-y-1 text-brand-textMuted";
+            navCustomWorkout.className = "flex flex-col items-center space-y-1 text-brand-textMuted";
             navProgress.className = "flex flex-col items-center space-y-1 text-brand-textMuted";
 
             if (tab === 'workout') {
@@ -933,6 +916,9 @@
             } else if (tab === 'builder') {
                 builderSection.classList.remove('hidden');
                 navBuilder.className = "flex flex-col items-center space-y-1 text-brand-purple";
+            } else if (tab === 'customWorkout') {
+                customWorkoutSection.classList.remove('hidden');
+                navCustomWorkout.className = "flex flex-col items-center space-y-1 text-brand-purple";
             } else if (tab === 'progress') {
                 progressSection.classList.remove('hidden');
                 navProgress.className = "flex flex-col items-center space-y-1 text-brand-purple";
