@@ -84,7 +84,7 @@
                     <label class="block text-[10px] font-semibold uppercase tracking-wider text-brand-textMuted mb-1">Senha</label>
                     <input type="password" id="loginPass" required placeholder="••••••••" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple transition text-sm">
                 </div>
-                <button type="submit" class="w-full mt-2 bg-brand-purple hover:bg-brand-purpleDark active:scale-95 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-brand-purple/30 text-sm">
+                <button id="btnLoginSubmit" type="submit" class="w-full mt-2 bg-brand-purple hover:bg-brand-purpleDark active:scale-95 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-brand-purple/30 text-sm">
                     ENTRAR NA CONTA
                 </button>
             </form>
@@ -109,7 +109,7 @@
                         <input type="number" id="regHeight" required placeholder="Ex: 190" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple transition text-sm">
                     </div>
                 </div>
-                <button type="submit" class="w-full mt-2 bg-brand-purple hover:bg-brand-purpleDark active:scale-95 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-brand-purple/30 text-sm">
+                <button id="btnRegSubmit" type="submit" class="w-full mt-2 bg-brand-purple hover:bg-brand-purpleDark active:scale-95 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-brand-purple/30 text-sm">
                     CRIAR CONTA & SALVAR NA NUVEM
                 </button>
             </form>
@@ -449,65 +449,100 @@
 
         async function handleRegister(e) {
             e.preventDefault();
+            const btn = document.getElementById('btnRegSubmit');
+            btn.disabled = true;
+            btn.innerText = "A CRIAR CONTA...";
+
             const nick = document.getElementById('regNick').value.trim();
             const pass = document.getElementById('regPass').value;
             const weight = parseFloat(document.getElementById('regWeight').value);
             const height = parseInt(document.getElementById('regHeight').value);
 
-            const { data: existing } = await _supabase
-                .from('usuarios')
-                .select('id')
-                .eq('apelido', nick.toLowerCase());
+            try {
+                const { data: existing, error: searchErr } = await _supabase
+                    .from('usuarios')
+                    .select('id')
+                    .eq('apelido', nick.toLowerCase());
 
-            if (existing && existing.length > 0) {
-                alert("Este apelido já está em uso! Tente outro.");
-                return;
-            }
+                if (existing && existing.length > 0) {
+                    alert("Este apelido já está em uso! Tente outro.");
+                    btn.disabled = false;
+                    btn.innerText = "CRIAR CONTA & SALVAR NA NUVEM";
+                    return;
+                }
 
-            const initialData = { completedSets: {}, waterMl: 0, history: [] };
+                const initialData = { completedSets: {}, waterMl: 0, history: [] };
 
-            const { error } = await _supabase
-                .from('usuarios')
-                .insert([
-                    {
-                        apelido: nick.toLowerCase(),
-                        senha: pass,
-                        peso: weight,
-                        altura: height,
-                        dados_treino: initialData
-                    }
-                ]);
+                const { error } = await _supabase
+                    .from('usuarios')
+                    .insert([
+                        {
+                            apelido: nick.toLowerCase(),
+                            senha: pass,
+                            peso: weight,
+                            altura: height,
+                            dados_treino: initialData
+                        }
+                    ]);
 
-            if (error) {
-                alert("Erro ao criar conta: " + error.message);
-            } else {
-                alert("Conta criada com sucesso na nuvem!");
-                currentUser = nick.toLowerCase();
-                localStorage.setItem('7ks_supabase_active_user', currentUser);
-                document.getElementById('authModal').classList.add('hidden');
-                loadFromCloud();
+                if (error) {
+                    alert("Erro ao criar conta: " + error.message);
+                } else {
+                    alert("Conta criada com sucesso na nuvem!");
+                    currentUser = nick.toLowerCase();
+                    localStorage.setItem('7ks_supabase_active_user', currentUser);
+                    document.getElementById('authModal').classList.add('hidden');
+                    loadFromCloud();
+                }
+            } catch (err) {
+                alert("Erro inesperado: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "CRIAR CONTA & SALVAR NA NUVEM";
             }
         }
 
         async function handleLogin(e) {
             e.preventDefault();
+            const btn = document.getElementById('btnLoginSubmit');
+            btn.disabled = true;
+            btn.innerText = "A ENTRAR...";
+
             const nick = document.getElementById('loginUser').value.trim().toLowerCase();
             const pass = document.getElementById('loginPass').value;
 
-            const { data, error } = await _supabase
-                .from('usuarios')
-                .select('*')
-                .eq('apelido', nick)
-                .eq('senha', pass)
-                .single();
+            try {
+                const { data, error } = await _supabase
+                    .from('usuarios')
+                    .select('*')
+                    .eq('apelido', nick);
 
-            if (error || !data) {
-                alert("Apelido ou senha incorretos!");
-            } else {
+                if (error) {
+                    alert("Erro ao ligar ao servidor: " + error.message);
+                    return;
+                }
+
+                if (!data || data.length === 0) {
+                    alert("Conta não encontrada! Alterne para a aba 'Criar Conta' primeiro.");
+                    return;
+                }
+
+                const user = data[0];
+                if (user.senha !== pass) {
+                    alert("Palavra-passe incorreta!");
+                    return;
+                }
+
                 currentUser = nick;
                 localStorage.setItem('7ks_supabase_active_user', currentUser);
                 document.getElementById('authModal').classList.add('hidden');
-                applyUserData(data);
+                applyUserData(user);
+
+            } catch (err) {
+                alert("Ocorreu um erro: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "ENTRAR NA CONTA";
             }
         }
 
@@ -516,11 +551,10 @@
             const { data } = await _supabase
                 .from('usuarios')
                 .select('*')
-                .eq('apelido', currentUser)
-                .single();
+                .eq('apelido', currentUser);
 
-            if (data) {
-                applyUserData(data);
+            if (data && data.length > 0) {
+                applyUserData(data[0]);
             }
         }
 
