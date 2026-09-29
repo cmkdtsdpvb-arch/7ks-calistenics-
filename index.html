@@ -10,8 +10,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Font: Inter & Montserrat -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
-    <!-- SUPABASE JS SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -273,18 +271,36 @@
     <audio id="beepSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
     <script>
-        var SUPABASE_URL = 'https://llqrvogydcnxsgnuaqeq.supabase.co';[span_0](start_span)[span_0](end_span)
+        var SUPABASE_URL = 'https://llqrvogydcnxsgnuaqeq.supabase.co';
         var SUPABASE_KEY = 'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxscXJ2b2d5ZGNueHNnbnVhcWVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NjYyNzcsImV4cCI6MjEwNjI0MjI3N30.Q09SLFqCbAUtdXMm1PkTUEhZRUWBCulrEPbfKLdfWjM';
 
-        // Obter cliente do Supabase com verificação de segurança
-        function getSupabase() {
-            if (window.supabase && window.supabase.createClient) {
-                return window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        async function supabaseRest(endpoint, options = {}) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, {
+                    ...options,
+                    signal: controller.signal,
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': options.prefer || 'return=representation',
+                        ...(options.headers || {})
+                    }
+                });
+                clearTimeout(timeoutId);
+                const data = await response.json().catch(() => null);
+                return { ok: response.ok, status: response.status, data };
+            } catch (err) {
+                clearTimeout(timeoutId);
+                return { 
+                    ok: false, 
+                    status: 0, 
+                    data: { message: err.name === 'AbortError' ? 'O servidor demorou a responder.' : err.message } 
+                };
             }
-            if (window.supabaseClient) {
-                return window.supabaseClient;
-            }
-            return null;
         }
 
         var exercises = [
@@ -348,44 +364,33 @@
             var weight = parseFloat(document.getElementById('regWeight').value);
             var height = parseInt(document.getElementById('regHeight').value);
 
-            var client = getSupabase();
-            if (!client) {
-                alert("Erro ao carregar o Supabase. Recarregue a página e tente novamente.");
-                btn.disabled = false;
-                btn.innerText = "CRIAR CONTA & SALVAR NA NUVEM";
-                return;
-            }
-
             try {
-                const { data: check, error: checkErr } = await client
-                    .from('usuarios')
-                    .select('*')
-                    .eq('apelido', nick);
-
-                if (checkErr) throw checkErr;
-
-                if (check && check.length > 0) {
+                const check = await supabaseRest(`usuarios?apelido=eq.${encodeURIComponent(nick)}`);
+                
+                if (check.ok && check.data && check.data.length > 0) {
                     alert("Este apelido já está em uso! Escolha outro.");
                     btn.disabled = false;
                     btn.innerText = "CRIAR CONTA & SALVAR NA NUVEM";
                     return;
                 }
 
-                const { data: insert, error: insertErr } = await client
-                    .from('usuarios')
-                    .insert([{
+                const insert = await supabaseRest('usuarios', {
+                    method: 'POST',
+                    body: JSON.stringify({
                         apelido: nick,
                         senha: pass,
                         peso: weight,
                         altura: height,
                         dados_treino: { completedSets: {}, waterMl: 0, history: [] }
-                    }]);
+                    })
+                });
 
                 btn.disabled = false;
                 btn.innerText = "CRIAR CONTA & SALVAR NA NUVEM";
 
-                if (insertErr) {
-                    alert("Mensagem do Servidor: " + insertErr.message);
+                if (!insert.ok) {
+                    var errorMsg = (insert.data && insert.data.message) ? insert.data.message : JSON.stringify(insert.data);
+                    alert("Erro ao criar conta: " + errorMsg);
                 } else {
                     alert("Conta criada com sucesso na nuvem!");
                     currentUser = nick;
@@ -396,7 +401,7 @@
             } catch (err) {
                 btn.disabled = false;
                 btn.innerText = "CRIAR CONTA & SALVAR NA NUVEM";
-                alert("Falha de ligação: " + (err.message || err));
+                alert("Falha de conexão: " + err.message);
             }
         }
 
@@ -409,34 +414,22 @@
             var nick = document.getElementById('loginUser').value.trim().toLowerCase();
             var pass = document.getElementById('loginPass').value;
 
-            var client = getSupabase();
-            if (!client) {
-                alert("Erro ao carregar o Supabase. Recarregue a página.");
-                btn.disabled = false;
-                btn.innerText = "ENTRAR NA CONTA";
-                return;
-            }
-
             try {
-                const { data: users, error } = await client
-                    .from('usuarios')
-                    .select('*')
-                    .eq('apelido', nick);
-
+                const res = await supabaseRest(`usuarios?apelido=eq.${encodeURIComponent(nick)}`);
                 btn.disabled = false;
                 btn.innerText = "ENTRAR NA CONTA";
 
-                if (error) {
-                    alert("Erro: " + error.message);
+                if (!res.ok) {
+                    alert("Erro ao conectar com o servidor.");
                     return;
                 }
 
-                if (!users || users.length === 0) {
+                if (!res.data || res.data.length === 0) {
                     alert("Conta não encontrada! Mude para a aba 'Criar Conta' primeiro.");
                     return;
                 }
 
-                var user = users[0];
+                var user = res.data[0];
                 if (user.senha !== pass) {
                     alert("Senha incorreta!");
                     return;
@@ -449,23 +442,16 @@
             } catch (err) {
                 btn.disabled = false;
                 btn.innerText = "ENTRAR NA CONTA";
-                alert("Erro: " + (err.message || err));
+                alert("Erro: " + err.message);
             }
         }
 
         async function loadFromCloud() {
             if (!currentUser) return;
-            var client = getSupabase();
-            if (!client) return;
-
             try {
-                const { data: users, error } = await client
-                    .from('usuarios')
-                    .select('*')
-                    .eq('apelido', currentUser);
-
-                if (!error && users && users.length > 0) {
-                    applyUserData(users[0]);
+                const res = await supabaseRest(`usuarios?apelido=eq.${encodeURIComponent(currentUser)}`);
+                if (res.ok && res.data && res.data.length > 0) {
+                    applyUserData(res.data[0]);
                 }
             } catch (e) {}
         }
@@ -486,20 +472,17 @@
 
         async function syncDataToCloud() {
             if (!currentUser) return;
-            var client = getSupabase();
-            if (!client) return;
-
             try {
-                await client
-                    .from('usuarios')
-                    .update({
+                await supabaseRest(`usuarios?apelido=eq.${encodeURIComponent(currentUser)}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({
                         dados_treino: {
                             completedSets: completedSets,
                             waterMl: waterMl,
                             history: workoutHistory
                         }
                     })
-                    .eq('apelido', currentUser);
+                });
             } catch (e) {}
         }
 
