@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Font: Inter & Montserrat -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
-    <!-- Supabase JS Client via CDN -->
+    <!-- Supabase JS Client v2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         tailwind.config = {
@@ -70,8 +70,8 @@
 
             <!-- ABAS LOGIN / CADASTRO -->
             <div class="flex bg-black/50 p-1 rounded-xl mb-4 border border-white/5">
-                <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-2 text-xs font-bold rounded-lg bg-brand-purple text-white transition">Entrar</button>
-                <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="flex-1 py-2 text-xs font-bold rounded-lg text-brand-textMuted transition">Criar Conta</button>
+                <button id="tabLoginBtn" type="button" onclick="switchAuthTab('login')" class="flex-1 py-2 text-xs font-bold rounded-lg bg-brand-purple text-white transition">Entrar</button>
+                <button id="tabRegisterBtn" type="button" onclick="switchAuthTab('register')" class="flex-1 py-2 text-xs font-bold rounded-lg text-brand-textMuted transition">Criar Conta</button>
             </div>
 
             <!-- FORMULÁRIO DE LOGIN -->
@@ -121,7 +121,7 @@
         <div class="bg-brand-card border border-brand-purple/40 rounded-3xl p-5 w-full max-w-md purple-glow max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-3">
                 <h3 id="modalExerciseTitle" class="font-display font-extrabold text-lg text-white">Como Executar</h3>
-                <button onclick="closeExerciseModal()" class="w-8 h-8 rounded-full bg-black/50 border border-white/10 text-brand-textMuted hover:text-white flex items-center justify-center">
+                <button type="button" onclick="closeExerciseModal()" class="w-8 h-8 rounded-full bg-black/50 border border-white/10 text-brand-textMuted hover:text-white flex items-center justify-center">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -147,7 +147,7 @@
                     <p id="userWelcome" class="text-xs text-brand-textMuted">Bora treinar!</p>
                 </div>
             </div>
-            <button onclick="logout()" title="Sair da conta" class="text-xs bg-red-500/10 border border-red-500/20 px-2.5 py-1.5 rounded-lg text-red-400 hover:bg-red-500/20">
+            <button type="button" onclick="logout()" title="Sair da conta" class="text-xs bg-red-500/10 border border-red-500/20 px-2.5 py-1.5 rounded-lg text-red-400 hover:bg-red-500/20">
                 <i class="fa-solid fa-right-from-bracket"></i>
             </button>
         </div>
@@ -164,7 +164,7 @@
                         <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-brand-purple/20 text-brand-purpleLight border border-brand-purple/30 mb-1">TREINO ATUAL</span>
                         <h2 class="text-xl font-display font-extrabold text-white">Treino Básico Calistenia</h2>
                     </div>
-                    <button onclick="resetWorkout()" class="text-brand-textMuted hover:text-red-400 text-xs flex items-center gap-1 bg-black/40 px-2.5 py-1.5 rounded-lg border border-white/5">
+                    <button type="button" onclick="resetWorkout()" class="text-brand-textMuted hover:text-red-400 text-xs flex items-center gap-1 bg-black/40 px-2.5 py-1.5 rounded-lg border border-white/5">
                         <i class="fa-solid fa-rotate-right"></i> Reset
                     </button>
                 </div>
@@ -192,9 +192,9 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-2">
-                    <button onclick="addWater(-250)" class="w-8 h-8 rounded-lg bg-black/50 border border-white/10 flex items-center justify-center text-white active:scale-95 text-xs">-</button>
+                    <button type="button" onclick="addWater(-250)" class="w-8 h-8 rounded-lg bg-black/50 border border-white/10 flex items-center justify-center text-white active:scale-95 text-xs">-</button>
                     <span id="waterCount" class="font-bold text-sm text-blue-400 min-w-[60px] text-center">0 ml</span>
-                    <button onclick="addWater(250)" class="w-8 h-8 rounded-lg bg-blue-600 border border-blue-500 flex items-center justify-center text-white active:scale-95 text-xs">+</button>
+                    <button type="button" onclick="addWater(250)" class="w-8 h-8 rounded-lg bg-blue-600 border border-blue-500 flex items-center justify-center text-white active:scale-95 text-xs">+</button>
                 </div>
             </div>
 
@@ -202,7 +202,7 @@
             <div id="exerciseList" class="space-y-4"></div>
 
             <div class="pt-2 pb-6">
-                <button onclick="finishWorkout()" class="w-full bg-gradient-to-r from-brand-purpleDark to-brand-purple hover:opacity-90 active:scale-95 text-white font-display font-bold py-4 rounded-2xl transition shadow-lg shadow-brand-purple/25 flex items-center justify-center gap-2">
+                <button type="button" onclick="finishWorkout()" class="w-full bg-gradient-to-r from-brand-purpleDark to-brand-purple hover:opacity-90 active:scale-95 text-white font-display font-bold py-4 rounded-2xl transition shadow-lg shadow-brand-purple/25 flex items-center justify-center gap-2">
                     <i class="fa-solid fa-check-double text-lg"></i> FINALIZAR & SALVAR TREINO
                 </button>
             </div>
@@ -258,7 +258,7 @@
             <p class="text-[10px] text-brand-textMuted uppercase font-semibold">Descanso Restante</p>
             <span id="timerDisplay" class="font-display font-black text-lg text-white">01:00</span>
         </div>
-        <button onclick="skipTimer()" class="text-xs bg-white/10 hover:bg-white/20 text-white px-2.5 py-1.5 rounded-lg border border-white/10">
+        <button type="button" onclick="skipTimer()" class="text-xs bg-white/10 hover:bg-white/20 text-white px-2.5 py-1.5 rounded-lg border border-white/10">
             Pular
         </button>
     </div>
@@ -266,11 +266,11 @@
     <!-- NAVEGAÇÃO INFERIOR -->
     <nav class="fixed bottom-0 left-0 right-0 bg-brand-black/95 backdrop-blur-lg border-t border-white/10 px-6 py-2.5 z-40">
         <div class="max-w-md mx-auto flex justify-around">
-            <button onclick="switchTab('workout')" id="navWorkout" class="flex flex-col items-center space-y-1 text-brand-purple">
+            <button type="button" onclick="switchTab('workout')" id="navWorkout" class="flex flex-col items-center space-y-1 text-brand-purple">
                 <i class="fa-solid fa-dumbbell text-lg"></i>
                 <span class="text-[10px] font-bold">Treino</span>
             </button>
-            <button onclick="switchTab('progress')" id="navProgress" class="flex flex-col items-center space-y-1 text-brand-textMuted">
+            <button type="button" onclick="switchTab('progress')" id="navProgress" class="flex flex-col items-center space-y-1 text-brand-textMuted">
                 <i class="fa-solid fa-chart-line text-lg"></i>
                 <span class="text-[10px] font-bold">Progresso</span>
             </button>
@@ -280,143 +280,26 @@
     <audio id="beepSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
     <script>
-        // CONFIGURAÇÃO SUPABASE
-        var SUPABASE_URL = 'https://llqrvogydcnxsgnuaqeq.supabase.co';[span_0](start_span)[span_0](end_span)
+        var SUPABASE_URL = 'https://llqrvogydcnxsgnuaqeq.supabase.co';[span_4](start_span)[span_4](end_span)
         var SUPABASE_KEY = 'Sb_publishable_65kB7qIQ6nc45ZerxhMTwA_6Ww1kWWQ';
-        var _supabase = null;
+        var _supabaseClient = null;
 
-        function getSupabaseClient() {
-            if (!_supabase) {
-                if (window.supabase) {
-                    _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                } else {
-                    console.error("SDK do Supabase ainda não carregou.");
-                }
+        function getClient() {
+            if (!_supabaseClient && window.supabase) {
+                _supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             }
-            return _supabase;
+            return _supabaseClient;
         }
 
         var exercises = [
-            {
-                id: 'flexoes',
-                name: 'Flexões',
-                meta: '5×10 (50 repetições)',
-                sets: 5,
-                targets: 'Peitoral, tríceps, ombros (deltoide anterior) e core.',
-                img: 'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?q=80&w=600&auto=format&fit=crop',
-                videoUrl: 'https://www.youtube.com/embed/iod3sACpL4w',
-                steps: [
-                    'Mantenha as mãos alinhadas na largura dos ombros.',
-                    'Mantenha o corpo reto como uma prancha, contraindo o abdômen e glúteos.',
-                    'Desça o peito até quase tocar o chão mantendo os cotovelos a 45 graus.',
-                    'Empurre o chão até estender os braços completamente.'
-                ]
-            },
-            {
-                id: 'barra_fixa',
-                name: 'Barra Fixa',
-                meta: '5×5 (25 repetições)',
-                sets: 5,
-                targets: 'Latíssimo do dorso, bíceps, antebraços, trapézio e romboides.',
-                img: 'https://images.unsplash.com/photo-1598971457999-ca4ef48a9a71?q=80&w=600&auto=format&fit=crop',
-                videoUrl: 'https://www.youtube.com/embed/eGo4IYlbE5g',
-                steps: [
-                    'Segure a barra com pegada pronada (palmas para a frente).',
-                    'Inicie o movimento puxando as escápulas para baixo.',
-                    'Puxe o corpo para cima até o queixo passar da barra.',
-                    'Desça de forma controlada até estender totalmente os braços.'
-                ]
-            },
-            {
-                id: 'barra_australiana',
-                name: 'Barra Australiana',
-                meta: '5×5 (25 repetições)',
-                sets: 5,
-                targets: 'Costas (parte média), bíceps, antebraços e deltoide posterior.',
-                img: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=600&auto=format&fit=crop',
-                videoUrl: 'https://www.youtube.com/embed/G2eJ-A_xPUI',
-                steps: [
-                    'Ajuste uma barra baixa na altura da cintura.',
-                    'Posicione-se embaixo da barra com os calcanhares apoiados no chão.',
-                    'Puxe o peito em direção à barra mantendo o corpo alinhado.',
-                    'Retorne devagar sem soltar o corpo.'
-                ]
-            },
-            {
-                id: 'abdominais',
-                name: 'Abdominais',
-                meta: '5×5 (25 repetições)',
-                sets: 5,
-                targets: 'Reto abdominal e auxílio no fortalecimento do core.',
-                img: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=600&auto=format&fit=crop',
-                videoUrl: 'https://www.youtube.com/embed/Xyd_fa5zoEU',
-                steps: [
-                    'Deite-se de costas com os joelhos dobrados e pés apoiados.',
-                    'Coloque as mãos ao lado da cabeça sem puxar o pescoço.',
-                    'Contraia o abdômen elevando levemente os ombros do chão.',
-                    'Exhale ao subir e solte o ar na descida.'
-                ]
-            },
-            {
-                id: 'prancha',
-                name: 'Prancha',
-                meta: '3 a 5 séries de 30–60s',
-                sets: 5,
-                targets: 'Core completo, glúteos e ombros.',
-                img: 'https://images.unsplash.com/photo-1566241142559-40e1dab266c6?q=80&w=600&auto=format&fit=crop',
-                videoUrl: 'https://www.youtube.com/embed/pSHjTRCQxIw',
-                steps: [
-                    'Apoie os antebraços e as pontas dos pés no chão.',
-                    'Mantenha os cotovelos alinhados logo abaixo dos ombros.',
-                    'Contraia forte o abdômen e glúteos evitando empinar ou arcar a coluna.',
-                    'Mantenha a respiração constante durante o tempo determinado.'
-                ]
-            },
-            {
-                id: 'agachamentos',
-                name: 'Agachamentos',
-                meta: '5×10 (50 repetições)',
-                sets: 5,
-                targets: 'Quadríceps, glúteos, posteriores da coxa e core.',
-                img: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=600&auto=format&fit=crop',
-                videoUrl: 'https://www.youtube.com/embed/aclHkVaku9U',
-                steps: [
-                    'Afaste os pés na largura dos ombros.',
-                    'Agache jogando o quadril para trás como se fosse sentar em uma cadeira.',
-                    'Desça até as coxas ficarem paralelas ao chão.',
-                    'Mantenha os joelhos alinhados com as pontas dos pés.'
-                ]
-            },
-            {
-                id: 'calcanhar',
-                name: 'Levantamento de Calcanhar',
-                meta: '5×10 (50 repetições)',
-                sets: 5,
-                targets: 'Panturrilhas e estabilidade do tornozelo.',
-                img: 'https://images.unsplash.com/photo-1434682881908-b43d0467b798?q=80&w=600&auto=format&fit=crop',
-                videoUrl: 'https://www.youtube.com/embed/gwLzBJYoWlI',
-                steps: [
-                    'Fique em pé com a postura ereta.',
-                    'Eleve o corpo contratando as panturrilhas e subindo na ponta dos pés.',
-                    'Pause por 1 segundo no topo.',
-                    'Desça devagar até o calcanhar tocar suavemente no chão.'
-                ]
-            },
-            {
-                id: 'elevacao_lateral',
-                name: 'Elevação Lateral',
-                meta: '5×5 (25 repetições) com 4 kg',
-                sets: 5,
-                targets: 'Deltoide lateral, trapézio superior e manguito rotador.',
-                img: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=600&auto=format&fit=crop',
-                videoUrl: 'https://www.youtube.com/embed/3VcKaXpzqRo',
-                steps: [
-                    'Segure os pesos (ou garrafas) ao lado do corpo.',
-                    'Eleve os braços lateralmente até a altura dos ombros.',
-                    'Mantenha os cotovelos levemente flexionados.',
-                    'Controle a descida sem soltar o peso rapidamente.'
-                ]
-            }
+            { id: 'flexoes', name: 'Flexões', meta: '5×10 (50 repetições)', sets: 5, targets: 'Peitoral, tríceps, ombros e core.', img: 'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/iod3sACpL4w', steps: ['Mãos na largura dos ombros.', 'Corpo reto.', 'Desça até quase tocar o chão.', 'Empurre de volta.'] },
+            { id: 'barra_fixa', name: 'Barra Fixa', meta: '5×5 (25 repetições)', sets: 5, targets: 'Costas, bíceps e antebraços.', img: 'https://images.unsplash.com/photo-1598971457999-ca4ef48a9a71?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/eGo4IYlbE5g', steps: ['Pegada pronada.', 'Puxe até passar o queixo.', 'Desça devagar.'] },
+            { id: 'barra_australiana', name: 'Barra Australiana', meta: '5×5 (25 repetições)', sets: 5, targets: 'Costas médias e bíceps.', img: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/G2eJ-A_xPUI', steps: ['Corpo inclinado.', 'Puxe o peito à barra.', 'Retorne devagar.'] },
+            { id: 'abdominais', name: 'Abdominais', meta: '5×5 (25 repetições)', sets: 5, targets: 'Reto abdominal.', img: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/Xyd_fa5zoEU', steps: ['Deite-se com joelhos dobrados.', 'Suba o tronco contraindo o abdômen.'] },
+            { id: 'prancha', name: 'Prancha', meta: '3 a 5 séries de 30–60s', sets: 5, targets: 'Core completo.', img: 'https://images.unsplash.com/photo-1566241142559-40e1dab266c6?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/pSHjTRCQxIw', steps: ['Apoie antebraços.', 'Mantenha o corpo alinhado.'] },
+            { id: 'agachamentos', name: 'Agachamentos', meta: '5×10 (50 repetições)', sets: 5, targets: 'Pernas e glúteos.', img: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/aclHkVaku9U', steps: ['Pés na largura dos ombros.', 'Agache até 90 graus.', 'Suba firme.'] },
+            { id: 'calcanhar', name: 'Levantamento de Calcanhar', meta: '5×10 (50 repetições)', sets: 5, targets: 'Panturrilhas.', img: 'https://images.unsplash.com/photo-1434682881908-b43d0467b798?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/gwLzBJYoWlI', steps: ['Suba na ponta dos pés.', 'Segure 1s no topo e desça.'] },
+            { id: 'elevacao_lateral', name: 'Elevação Lateral', meta: '5×5 (25 repetições)', sets: 5, targets: 'Ombros.', img: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/3VcKaXpzqRo', steps: ['Eleve os braços até a altura dos ombros.', 'Desça controlando.'] }
         ];
 
         var currentUser = null;
@@ -428,8 +311,8 @@
         var timerInterval = null;
         var timerTimeLeft = 60;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const activeUser = localStorage.getItem('7ks_supabase_active_user');
+        document.addEventListener('DOMContentLoaded', function() {
+            var activeUser = localStorage.getItem('7ks_supabase_active_user');
             if (activeUser) {
                 currentUser = activeUser;
                 loadFromCloud();
@@ -440,10 +323,10 @@
         });
 
         function switchAuthTab(tab) {
-            const loginForm = document.getElementById('loginForm');
-            const regForm = document.getElementById('registerForm');
-            const loginBtn = document.getElementById('tabLoginBtn');
-            const regBtn = document.getElementById('tabRegisterBtn');
+            var loginForm = document.getElementById('loginForm');
+            var regForm = document.getElementById('registerForm');
+            var loginBtn = document.getElementById('tabLoginBtn');
+            var regBtn = document.getElementById('tabRegisterBtn');
 
             if (tab === 'login') {
                 loginForm.classList.remove('hidden');
@@ -460,57 +343,51 @@
 
         async function handleRegister(e) {
             e.preventDefault();
-            const client = getSupabaseClient();
-            if (!client) {
-                alert("Servidor desconectado. Aguarde alguns segundos e tente novamente.");
-                return;
-            }
-
-            const btn = document.getElementById('btnRegSubmit');
+            var btn = document.getElementById('btnRegSubmit');
             btn.disabled = true;
             btn.innerText = "CRIANDO CONTA...";
 
-            const nick = document.getElementById('regNick').value.trim();
-            const pass = document.getElementById('regPass').value;
-            const weight = parseFloat(document.getElementById('regWeight').value);
-            const height = parseInt(document.getElementById('regHeight').value);
+            var nick = document.getElementById('regNick').value.trim();
+            var pass = document.getElementById('regPass').value;
+            var weight = parseFloat(document.getElementById('regWeight').value);
+            var height = parseInt(document.getElementById('regHeight').value);
+
+            var db = getClient();
+            if (!db) {
+                alert("Carregando banco de dados... Tente novamente em 3 segundos.");
+                btn.disabled = false;
+                btn.innerText = "CRIAR CONTA & SALVAR NA NUVEM";
+                return;
+            }
 
             try {
-                const { data: existing } = await client
-                    .from('usuarios')
-                    .select('id')
-                    .eq('apelido', nick.toLowerCase());
-
-                if (existing && existing.length > 0) {
-                    alert("Este apelido já está em uso! Tente outro.");
+                var search = await db.from('usuarios').select('id').eq('apelido', nick.toLowerCase());
+                if (search.data && search.data.length > 0) {
+                    alert("Apelido já em uso! Escolha outro.");
+                    btn.disabled = false;
+                    btn.innerText = "CRIAR CONTA & SALVAR NA NUVEM";
                     return;
                 }
 
-                const initialData = { completedSets: {}, waterMl: 0, history: [] };
+                var res = await db.from('usuarios').insert([{
+                    apelido: nick.toLowerCase(),
+                    senha: pass,
+                    peso: weight,
+                    altura: height,
+                    dados_treino: { completedSets: {}, waterMl: 0, history: [] }
+                }]);
 
-                const { error } = await client
-                    .from('usuarios')
-                    .insert([
-                        {
-                            apelido: nick.toLowerCase(),
-                            senha: pass,
-                            peso: weight,
-                            altura: height,
-                            dados_treino: initialData
-                        }
-                    ]);
-
-                if (error) {
-                    alert("Erro ao criar conta: " + error.message);
+                if (res.error) {
+                    alert("Erro ao salvar no banco: " + res.error.message);
                 } else {
-                    alert("Conta criada com sucesso na nuvem!");
+                    alert("Conta criada com sucesso!");
                     currentUser = nick.toLowerCase();
                     localStorage.setItem('7ks_supabase_active_user', currentUser);
                     document.getElementById('authModal').classList.add('hidden');
                     loadFromCloud();
                 }
             } catch (err) {
-                alert("Erro inesperado: " + err.message);
+                alert("Erro: " + err.message);
             } finally {
                 btn.disabled = false;
                 btn.innerText = "CRIAR CONTA & SALVAR NA NUVEM";
@@ -519,36 +396,34 @@
 
         async function handleLogin(e) {
             e.preventDefault();
-            const client = getSupabaseClient();
-            if (!client) {
-                alert("Servidor desconectado. Aguarde alguns segundos e tente novamente.");
-                return;
-            }
-
-            const btn = document.getElementById('btnLoginSubmit');
+            var btn = document.getElementById('btnLoginSubmit');
             btn.disabled = true;
             btn.innerText = "ENTRANDO...";
 
-            const nick = document.getElementById('loginUser').value.trim().toLowerCase();
-            const pass = document.getElementById('loginPass').value;
+            var nick = document.getElementById('loginUser').value.trim().toLowerCase();
+            var pass = document.getElementById('loginPass').value;
+
+            var db = getClient();
+            if (!db) {
+                alert("Carregando banco de dados... Tente novamente em 3 segundos.");
+                btn.disabled = false;
+                btn.innerText = "ENTRAR NA CONTA";
+                return;
+            }
 
             try {
-                const { data, error } = await client
-                    .from('usuarios')
-                    .select('*')
-                    .eq('apelido', nick);
-
-                if (error) {
-                    alert("Erro de conexão: " + error.message);
+                var res = await db.from('usuarios').select('*').eq('apelido', nick);
+                if (res.error) {
+                    alert("Erro ao acessar banco: " + res.error.message);
                     return;
                 }
 
-                if (!data || data.length === 0) {
-                    alert("Conta não encontrada! Clique em 'Criar Conta' primeiro.");
+                if (!res.data || res.data.length === 0) {
+                    alert("Conta não encontrada! Crie uma conta primeiro.");
                     return;
                 }
 
-                const user = data[0];
+                var user = res.data[0];
                 if (user.senha !== pass) {
                     alert("Senha incorreta!");
                     return;
@@ -558,9 +433,8 @@
                 localStorage.setItem('7ks_supabase_active_user', currentUser);
                 document.getElementById('authModal').classList.add('hidden');
                 applyUserData(user);
-
             } catch (err) {
-                alert("Ocorreu um erro: " + err.message);
+                alert("Erro: " + err.message);
             } finally {
                 btn.disabled = false;
                 btn.innerText = "ENTRAR NA CONTA";
@@ -569,22 +443,18 @@
 
         async function loadFromCloud() {
             if (!currentUser) return;
-            const client = getSupabaseClient();
-            if (!client) return;
+            var db = getClient();
+            if (!db) return;
 
-            const { data } = await client
-                .from('usuarios')
-                .select('*')
-                .eq('apelido', currentUser);
-
-            if (data && data.length > 0) {
-                applyUserData(data[0]);
+            var res = await db.from('usuarios').select('*').eq('apelido', currentUser);
+            if (res.data && res.data.length > 0) {
+                applyUserData(res.data[0]);
             }
         }
 
         function applyUserData(data) {
             userProfile = { nickname: data.apelido, weight: data.peso, height: data.altura };
-            const dt = data.dados_treino || {};
+            var dt = data.dados_treino || {};
             completedSets = dt.completedSets || {};
             waterMl = dt.waterMl || 0;
             workoutHistory = dt.history || [];
@@ -598,19 +468,16 @@
 
         async function syncDataToCloud() {
             if (!currentUser) return;
-            const client = getSupabaseClient();
-            if (!client) return;
+            var db = getClient();
+            if (!db) return;
 
-            await client
-                .from('usuarios')
-                .update({
-                    dados_treino: {
-                        completedSets: completedSets,
-                        waterMl: waterMl,
-                        history: workoutHistory
-                    }
-                })
-                .eq('apelido', currentUser);
+            await db.from('usuarios').update({
+                dados_treino: {
+                    completedSets: completedSets,
+                    waterMl: waterMl,
+                    history: workoutHistory
+                }
+            }).eq('apelido', currentUser);
         }
 
         function logout() {
@@ -626,26 +493,26 @@
             document.getElementById('profileHeightDisplay').textContent = `${userProfile.height} cm`;
 
             if (userProfile.weight && userProfile.height) {
-                const heightM = userProfile.height / 100;
-                const imc = (userProfile.weight / (heightM * heightM)).toFixed(1);
+                var heightM = userProfile.height / 100;
+                var imc = (userProfile.weight / (heightM * heightM)).toFixed(1);
                 document.getElementById('profileImcDisplay').textContent = imc;
             }
         }
 
         function renderExercises() {
-            const container = document.getElementById('exerciseList');
+            var container = document.getElementById('exerciseList');
             container.innerHTML = '';
 
-            exercises.forEach(ex => {
-                const card = document.createElement('div');
+            exercises.forEach(function(ex) {
+                var card = document.createElement('div');
                 card.className = "bg-brand-card border border-white/10 rounded-2xl overflow-hidden shadow-lg";
 
-                let buttonsHTML = '';
-                for (let i = 1; i <= ex.sets; i++) {
-                    const key = `${ex.id}_set_${i}`;
-                    const isDone = completedSets[key];
+                var buttonsHTML = '';
+                for (var i = 1; i <= ex.sets; i++) {
+                    var key = `${ex.id}_set_${i}`;
+                    var isDone = completedSets[key];
                     buttonsHTML += `
-                        <button onclick="toggleSet('${ex.id}', ${i})" id="btn_${key}" class="h-10 rounded-xl font-bold text-xs flex items-center justify-center transition-all ${
+                        <button type="button" onclick="toggleSet('${ex.id}', ${i})" id="btn_${key}" class="h-10 rounded-xl font-bold text-xs flex items-center justify-center transition-all ${
                             isDone 
                             ? 'bg-brand-purple text-white shadow-md shadow-brand-purple/30 border border-brand-purpleLight' 
                             : 'bg-black/50 text-brand-textMuted border border-white/10 hover:border-brand-purple/40'
@@ -664,7 +531,7 @@
                                 <h3 class="font-display font-extrabold text-lg text-white leading-snug">${ex.name}</h3>
                                 <p class="text-xs font-semibold text-brand-purpleLight">${ex.meta}</p>
                             </div>
-                            <button onclick="openExerciseModal('${ex.id}')" class="text-[10px] font-bold bg-brand-purple/30 border border-brand-purple/50 hover:bg-brand-purple text-white px-2.5 py-1.5 rounded-lg flex items-center gap-1 backdrop-blur-md">
+                            <button type="button" onclick="openExerciseModal('${ex.id}')" class="text-[10px] font-bold bg-brand-purple/30 border border-brand-purple/50 hover:bg-brand-purple text-white px-2.5 py-1.5 rounded-lg flex items-center gap-1 backdrop-blur-md">
                                 <i class="fa-solid fa-circle-play text-brand-purpleLight"></i> Como executar
                             </button>
                         </div>
@@ -683,10 +550,10 @@
         }
 
         function toggleSet(exerciseId, setNum) {
-            const key = `${exerciseId}_set_${setNum}`;
+            var key = `${exerciseId}_set_${setNum}`;
             completedSets[key] = !completedSets[key];
 
-            const btn = document.getElementById(`btn_${key}`);
+            var btn = document.getElementById(`btn_${key}`);
             if (completedSets[key]) {
                 btn.className = "h-10 rounded-xl font-bold text-xs flex items-center justify-center transition-all bg-brand-purple text-white shadow-md shadow-brand-purple/30 border border-brand-purpleLight";
                 startRestTimer();
@@ -699,16 +566,16 @@
         }
 
         function openExerciseModal(exerciseId) {
-            const ex = exercises.find(item => item.id === exerciseId);
+            var ex = exercises.find(function(item) { return item.id === exerciseId; });
             if (!ex) return;
 
             document.getElementById('modalExerciseTitle').textContent = `Como executar: ${ex.name}`;
             document.getElementById('modalVideoFrame').src = ex.videoUrl;
 
-            const stepsList = document.getElementById('modalStepsList');
+            var stepsList = document.getElementById('modalStepsList');
             stepsList.innerHTML = '';
-            ex.steps.forEach(step => {
-                const li = document.createElement('li');
+            ex.steps.forEach(function(step) {
+                var li = document.createElement('li');
                 li.textContent = step;
                 stepsList.appendChild(li);
             });
@@ -724,22 +591,22 @@
         function startRestTimer() {
             clearInterval(timerInterval);
             timerTimeLeft = 60;
-            const timerContainer = document.getElementById('timerContainer');
-            const timerDisplay = document.getElementById('timerDisplay');
+            var timerContainer = document.getElementById('timerContainer');
+            var timerDisplay = document.getElementById('timerDisplay');
 
             timerContainer.classList.remove('hidden');
             timerDisplay.textContent = "01:00";
 
-            timerInterval = setInterval(() => {
+            timerInterval = setInterval(function() {
                 timerTimeLeft--;
-                const mins = String(Math.floor(timerTimeLeft / 60)).padStart(2, '0');
-                const secs = String(timerTimeLeft % 60).padStart(2, '0');
+                var mins = String(Math.floor(timerTimeLeft / 60)).padStart(2, '0');
+                var secs = String(timerTimeLeft % 60).padStart(2, '0');
                 timerDisplay.textContent = `${mins}:${secs}`;
 
                 if (timerTimeLeft <= 0) {
                     clearInterval(timerInterval);
-                    document.getElementById('beepSound').play().catch(()=>{});
-                    setTimeout(() => {
+                    document.getElementById('beepSound').play().catch(function(){});
+                    setTimeout(function() {
                         timerContainer.classList.add('hidden');
                     }, 1000);
                 }
@@ -752,11 +619,11 @@
         }
 
         function updateProgress() {
-            let totalSets = 0;
-            exercises.forEach(ex => totalSets += ex.sets);
+            var totalSets = 0;
+            exercises.forEach(function(ex) { totalSets += ex.sets; });
 
-            let doneCount = Object.values(completedSets).filter(Boolean).length;
-            let percent = Math.round((doneCount / totalSets) * 100);
+            var doneCount = Object.values(completedSets).filter(Boolean).length;
+            var percent = Math.round((doneCount / totalSets) * 100);
 
             document.getElementById('progressBar').style.width = `${percent}%`;
             document.getElementById('progressText').textContent = `${percent}%`;
@@ -782,21 +649,21 @@
         }
 
         function finishWorkout() {
-            let totalSets = 0;
-            exercises.forEach(ex => totalSets += ex.sets);
-            let doneCount = Object.values(completedSets).filter(Boolean).length;
-            let percent = Math.round((doneCount / totalSets) * 100);
+            var totalSets = 0;
+            exercises.forEach(function(ex) { totalSets += ex.sets; });
+            var doneCount = Object.values(completedSets).filter(Boolean).length;
+            var percent = Math.round((doneCount / totalSets) * 100);
 
             if (doneCount === 0) {
                 alert("Marque ao menos uma série antes de salvar o treino!");
                 return;
             }
 
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-            const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            var now = new Date();
+            var dateStr = now.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            var timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
-            const record = {
+            var record = {
                 id: Date.now(),
                 date: dateStr,
                 time: timeStr,
@@ -815,7 +682,7 @@
         }
 
         function renderHistory() {
-            const container = document.getElementById('historyList');
+            var container = document.getElementById('historyList');
             document.getElementById('historyCount').textContent = `${workoutHistory.length} treinos salvos`;
 
             if (workoutHistory.length === 0) {
@@ -829,8 +696,8 @@
             }
 
             container.innerHTML = '';
-            workoutHistory.forEach(item => {
-                const card = document.createElement('div');
+            workoutHistory.forEach(function(item) {
+                var card = document.createElement('div');
                 card.className = "bg-brand-card border border-white/10 rounded-2xl p-4 space-y-2";
 
                 card.innerHTML = `
@@ -843,7 +710,7 @@
                             <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-brand-purple/20 text-brand-purple border border-brand-purple/30">
                                 ${item.percent}% Concluído
                             </span>
-                            <button onclick="deleteHistory(${item.id})" class="text-brand-textMuted hover:text-red-400 text-xs">
+                            <button type="button" onclick="deleteHistory(${item.id})" class="text-brand-textMuted hover:text-red-400 text-xs">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>
@@ -860,7 +727,7 @@
                         </div>
                     ` : ''}
 
-                    <button onclick="editNote(${item.id})" class="text-[10px] text-brand-purpleLight flex items-center gap-1 mt-1 font-semibold">
+                    <button type="button" onclick="editNote(${item.id})" class="text-[10px] text-brand-purpleLight flex items-center gap-1 mt-1 font-semibold">
                         <i class="fa-solid fa-pen"></i> ${item.note ? 'Editar Anotação' : '+ Adicionar Anotação'}
                     </button>
                 `;
@@ -869,10 +736,10 @@
         }
 
         function editNote(id) {
-            const item = workoutHistory.find(h => h.id === id);
+            var item = workoutHistory.find(function(h) { return h.id === id; });
             if (!item) return;
 
-            const newNote = prompt("Adicione observações para este treino:", item.note || "");
+            var newNote = prompt("Adicione observações para este treino:", item.note || "");
             if (newNote !== null) {
                 item.note = newNote.trim();
                 renderHistory();
@@ -882,17 +749,17 @@
 
         function deleteHistory(id) {
             if (confirm("Apagar este registro do histórico?")) {
-                workoutHistory = workoutHistory.filter(h => h.id !== id);
+                workoutHistory = workoutHistory.filter(function(h) { return h.id !== id; });
                 renderHistory();
                 syncDataToCloud();
             }
         }
 
         function switchTab(tab) {
-            const workoutSection = document.getElementById('tabWorkout');
-            const progressSection = document.getElementById('tabProgress');
-            const navWorkout = document.getElementById('navWorkout');
-            const navProgress = document.getElementById('navProgress');
+            var workoutSection = document.getElementById('tabWorkout');
+            var progressSection = document.getElementById('tabProgress');
+            var navWorkout = document.getElementById('navWorkout');
+            var navProgress = document.getElementById('navProgress');
 
             if (tab === 'workout') {
                 workoutSection.classList.remove('hidden');
