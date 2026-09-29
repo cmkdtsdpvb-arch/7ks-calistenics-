@@ -278,10 +278,10 @@
     <audio id="beepSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
     <script>
-        var SUPABASE_URL = 'https://llqrvogydcnxsgnuaqeq.supabase.co';[span_1](start_span)[span_1](end_span)
+        var SUPABASE_URL = 'https://llqrvogydcnxsgnuaqeq.supabase.co';[span_2](start_span)[span_2](end_span)
         var SUPABASE_KEY = 'Sb_publishable_65kB7qIQ6nc45ZerxhMTwA_6Ww1kWWQ';
 
-        // Chamada direta à REST API do Supabase compatível com chaves sb_publishable
+        // Requisição compativel com sb_publishable: envia APENAS o cabeçalho 'apikey'
         async function supabaseRequest(path, options = {}) {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 6000);
@@ -291,9 +291,7 @@
                     ...options,
                     signal: controller.signal,
                     headers: {
-                        'apiKey': SUPABASE_KEY,
                         'apikey': SUPABASE_KEY,
-                        'Authorization': `Bearer ${SUPABASE_KEY}`,
                         'Content-Type': 'application/json',
                         'Prefer': options.prefer || 'return=representation',
                         ...(options.headers || {})
@@ -374,7 +372,6 @@
             var height = parseInt(document.getElementById('regHeight').value);
 
             try {
-                // 1. Verificar se utilizador já existe
                 const check = await supabaseRequest(`usuarios?apelido=eq.${encodeURIComponent(nick.toLowerCase())}`);
                 
                 if (check.ok && check.data && check.data.length > 0) {
@@ -384,7 +381,6 @@
                     return;
                 }
 
-                // 2. Criar utilizador
                 const insert = await supabaseRequest('usuarios', {
                     method: 'POST',
                     body: JSON.stringify({
