@@ -10,8 +10,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Font: Inter & Montserrat -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
-    <!-- SUPABASE OFFICIAL JS SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -103,7 +101,7 @@
                     </div>
                 </div>
                 <button id="btnRegSubmit" type="submit" class="w-full mt-2 bg-brand-purple hover:bg-brand-purpleDark active:scale-95 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-brand-purple/30 text-sm">
-                    CRIAR CONTA NA NUVEM
+                    CRIAR CONTA
                 </button>
             </form>
         </div>
@@ -273,11 +271,6 @@
     <audio id="beepSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
     <script>
-        var SUPABASE_URL = 'https://wopbwgpjjszhqbnacsfo.supabase.co';[span_1](start_span)[span_1](end_span)
-        var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndvcGJ3Z3BqanN6aHFibmFjc2ZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA3MDAyMzksImV4cCI6MjEwNjI3NjIzOX0.iZWXBLB8cpK2gZe0C10UuMvOq0eMNibvl51E1Vr5tmo';
-
-        var supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
         var exercises = [
             { id: 'flexoes', name: 'Flexões', meta: '5×10 (50 repetições)', sets: 5, targets: 'Peitoral, tríceps, ombros e core.', img: 'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/iod3sACpL4w', steps: ['Mãos na largura dos ombros.', 'Corpo reto.', 'Desça até quase tocar o chão.', 'Empurre de volta.'] },
             { id: 'barra_fixa', name: 'Barra Fixa', meta: '5×5 (25 repetições)', sets: 5, targets: 'Costas, bíceps e antebraços.', img: 'https://images.unsplash.com/photo-1598971457999-ca4ef48a9a71?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/eGo4IYlbE5g', steps: ['Pegada pronada.', 'Puxe até passar o queixo.', 'Desça devagar.'] },
@@ -298,11 +291,20 @@
         var timerInterval = null;
         var timerTimeLeft = 60;
 
+        function getStoredUsers() {
+            var raw = localStorage.getItem('7ks_users_db');
+            return raw ? JSON.parse(raw) : {};
+        }
+
+        function saveUsersDB(db) {
+            localStorage.setItem('7ks_users_db', JSON.stringify(db));
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
-            var activeUser = localStorage.getItem('7ks_supabase_active_user');
+            var activeUser = localStorage.getItem('7ks_active_user');
             if (activeUser) {
                 currentUser = activeUser;
-                loadFromCloud();
+                loadFromLocal();
             } else {
                 document.getElementById('authModal').classList.remove('hidden');
             }
@@ -328,126 +330,67 @@
             }
         }
 
-        async function handleRegister(e) {
+        function handleRegister(e) {
             e.preventDefault();
-            var btn = document.getElementById('btnRegSubmit');
-            btn.disabled = true;
-            btn.innerText = "CRIANDO CONTA...";
-
             var nick = document.getElementById('regNick').value.trim().toLowerCase();
             var pass = document.getElementById('regPass').value;
             var weight = parseFloat(document.getElementById('regWeight').value);
             var height = parseInt(document.getElementById('regHeight').value);
 
-            try {
-                const { data: check, error: checkErr } = await supabaseClient
-                    .from('usuarios')
-                    .select('*')
-                    .eq('apelido', nick);
-
-                if (checkErr) throw checkErr;
-
-                if (check && check.length > 0) {
-                    alert("Este apelido já está em uso! Escolha outro.");
-                    btn.disabled = false;
-                    btn.innerText = "CRIAR CONTA NA NUVEM";
-                    return;
-                }
-
-                const { error: insertErr } = await supabaseClient
-                    .from('usuarios')
-                    .insert([{
-                        apelido: nick,
-                        senha: pass,
-                        peso: weight,
-                        altura: height,
-                        dados_treino: { completedSets: {}, waterMl: 0, history: [] }
-                    }]);
-
-                btn.disabled = false;
-                btn.innerText = "CRIAR CONTA NA NUVEM";
-
-                if (insertErr) {
-                    alert("Erro ao criar conta: " + insertErr.message);
-                } else {
-                    alert("Conta criada com sucesso na nuvem!");
-                    currentUser = nick;
-                    localStorage.setItem('7ks_supabase_active_user', currentUser);
-                    document.getElementById('authModal').classList.add('hidden');
-                    loadFromCloud();
-                }
-            } catch (err) {
-                btn.disabled = false;
-                btn.innerText = "CRIAR CONTA NA NUVEM";
-                alert("Falha de conexão: " + (err.message || err));
+            var db = getStoredUsers();
+            if (db[nick]) {
+                alert("Este apelido já está em uso! Escolha outro.");
+                return;
             }
+
+            db[nick] = {
+                password: pass,
+                profile: { nickname: nick, weight: weight, height: height },
+                completedSets: {},
+                waterMl: 0,
+                history: []
+            };
+
+            saveUsersDB(db);
+            currentUser = nick;
+            localStorage.setItem('7ks_active_user', currentUser);
+            document.getElementById('authModal').classList.add('hidden');
+            loadFromLocal();
+            alert("Conta criada com sucesso!");
         }
 
-        async function handleLogin(e) {
+        function handleLogin(e) {
             e.preventDefault();
-            var btn = document.getElementById('btnLoginSubmit');
-            btn.disabled = true;
-            btn.innerText = "ENTRANDO...";
-
             var nick = document.getElementById('loginUser').value.trim().toLowerCase();
             var pass = document.getElementById('loginPass').value;
 
-            try {
-                const { data: users, error } = await supabaseClient
-                    .from('usuarios')
-                    .select('*')
-                    .eq('apelido', nick);
-
-                btn.disabled = false;
-                btn.innerText = "ENTRAR NA CONTA";
-
-                if (error) {
-                    alert("Erro ao conectar: " + error.message);
-                    return;
-                }
-
-                if (!users || users.length === 0) {
-                    alert("Conta não encontrada! Mude para a aba 'Criar Conta' primeiro.");
-                    return;
-                }
-
-                var user = users[0];
-                if (user.senha !== pass) {
-                    alert("Senha incorreta!");
-                    return;
-                }
-
-                currentUser = nick;
-                localStorage.setItem('7ks_supabase_active_user', currentUser);
-                document.getElementById('authModal').classList.add('hidden');
-                applyUserData(user);
-            } catch (err) {
-                btn.disabled = false;
-                btn.innerText = "ENTRAR NA CONTA";
-                alert("Erro: " + (err.message || err));
+            var db = getStoredUsers();
+            if (!db[nick]) {
+                alert("Conta não encontrada! Mude para a aba 'Criar Conta' primeiro.");
+                return;
             }
+
+            if (db[nick].password !== pass) {
+                alert("Senha incorreta!");
+                return;
+            }
+
+            currentUser = nick;
+            localStorage.setItem('7ks_active_user', currentUser);
+            document.getElementById('authModal').classList.add('hidden');
+            loadFromLocal();
         }
 
-        async function loadFromCloud() {
+        function loadFromLocal() {
             if (!currentUser) return;
-            try {
-                const { data: users, error } = await supabaseClient
-                    .from('usuarios')
-                    .select('*')
-                    .eq('apelido', currentUser);
+            var db = getStoredUsers();
+            var userData = db[currentUser];
+            if (!userData) return;
 
-                if (!error && users && users.length > 0) {
-                    applyUserData(users[0]);
-                }
-            } catch (e) {}
-        }
-
-        function applyUserData(data) {
-            userProfile = { nickname: data.apelido, weight: data.peso, height: data.altura };
-            var dt = data.dados_treino || {};
-            completedSets = dt.completedSets || {};
-            waterMl = dt.waterMl || 0;
-            workoutHistory = dt.history || [];
+            userProfile = userData.profile;
+            completedSets = userData.completedSets || {};
+            waterMl = userData.waterMl || 0;
+            workoutHistory = userData.history || [];
 
             updateProfileDisplay();
             renderExercises();
@@ -456,24 +399,19 @@
             renderHistory();
         }
 
-        async function syncDataToCloud() {
+        function syncDataToLocal() {
             if (!currentUser) return;
-            try {
-                await supabaseClient
-                    .from('usuarios')
-                    .update({
-                        dados_treino: {
-                            completedSets: completedSets,
-                            waterMl: waterMl,
-                            history: workoutHistory
-                        }
-                    })
-                    .eq('apelido', currentUser);
-            } catch (e) {}
+            var db = getStoredUsers();
+            if (db[currentUser]) {
+                db[currentUser].completedSets = completedSets;
+                db[currentUser].waterMl = waterMl;
+                db[currentUser].history = workoutHistory;
+                saveUsersDB(db);
+            }
         }
 
         function logout() {
-            localStorage.removeItem('7ks_supabase_active_user');
+            localStorage.removeItem('7ks_active_user');
             location.reload();
         }
 
@@ -554,7 +492,7 @@
             }
 
             updateProgress();
-            syncDataToCloud();
+            syncDataToLocal();
         }
 
         function openExerciseModal(exerciseId) {
@@ -624,7 +562,7 @@
         function addWater(amount) {
             waterMl = Math.max(0, waterMl + amount);
             updateWaterDisplay();
-            syncDataToCloud();
+            syncDataToLocal();
         }
 
         function updateWaterDisplay() {
@@ -636,7 +574,7 @@
                 completedSets = {};
                 renderExercises();
                 updateProgress();
-                syncDataToCloud();
+                syncDataToLocal();
             }
         }
 
@@ -668,9 +606,9 @@
 
             workoutHistory.unshift(record);
             renderHistory();
-            syncDataToCloud();
+            syncDataToLocal();
             switchTab('progress');
-            alert("Treino salvo com sucesso na nuvem!");
+            alert("Treino salvo com sucesso!");
         }
 
         function renderHistory() {
@@ -735,7 +673,7 @@
             if (newNote !== null) {
                 item.note = newNote.trim();
                 renderHistory();
-                syncDataToCloud();
+                syncDataToLocal();
             }
         }
 
@@ -743,7 +681,7 @@
             if (confirm("Apagar este registro do histórico?")) {
                 workoutHistory = workoutHistory.filter(function(h) { return h.id !== id; });
                 renderHistory();
-                syncDataToCloud();
+                syncDataToLocal();
             }
         }
 
