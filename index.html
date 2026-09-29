@@ -223,12 +223,12 @@
             </div>
         </section>
 
-        <!-- ABA 2: MONTAR MEU TREINO -->
-        <section id="tabBuilder" class="space-y-4 hidden">
+        <!-- ABA 2: CRIE SEU TREINO (Criador + Lista Personalizada unificados) -->
+        <section id="tabCustomWorkout" class="space-y-4 hidden">
             <div class="bg-brand-card border border-white/10 rounded-2xl p-5">
                 <div class="flex items-center space-x-3 mb-4">
                     <div class="w-10 h-10 rounded-xl bg-brand-purple/20 border border-brand-purple flex items-center justify-center text-brand-purple text-lg">
-                        <i class="fa-solid fa-hammer"></i>
+                        💪🏽
                     </div>
                     <div>
                         <h2 class="font-display font-bold text-lg text-white">Criar Novo Exercício</h2>
@@ -256,24 +256,18 @@
                         <input type="text" id="customTargets" required placeholder="Ex: Tríceps e peitoral" class="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-brand-purple transition text-sm">
                     </div>
                     <button type="submit" class="w-full mt-2 bg-brand-purple hover:bg-brand-purpleDark active:scale-95 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-brand-purple/30 text-sm flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-plus"></i> SALVAR NO TREINO PERSONALIZADO
+                        <i class="fa-solid fa-plus"></i> ADICIONAR AO MEU TREINO
                     </button>
                 </form>
             </div>
-        </section>
 
-        <!-- ABA 3: TREINO PERSONALIZADO -->
-        <section id="tabCustomWorkout" class="space-y-4 hidden">
-            <div class="bg-brand-card border border-brand-purple/40 rounded-2xl p-4 relative overflow-hidden purple-glow">
-                <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-brand-purple/20 text-brand-purpleLight border border-brand-purple/30 mb-1">EXCLUSIVO</span>
-                <h2 class="text-xl font-display font-extrabold text-white">Treino Personalizado</h2>
-                <p class="text-xs text-brand-textMuted mt-1">Aqui estão todos os exercícios que você criou e sincronizou na nuvem.</p>
+            <div class="pt-2">
+                <h3 class="font-display font-bold text-base text-white mb-3">Seus Exercícios Personalizados</h3>
+                <div id="customExerciseList" class="space-y-4"></div>
             </div>
-
-            <div id="customExerciseList" class="space-y-4"></div>
         </section>
 
-        <!-- ABA 4: PROGRESSO / HISTÓRICO -->
+        <!-- ABA 3: PROGRESSO / HISTÓRICO -->
         <section id="tabProgress" class="space-y-4 hidden">
             <div class="bg-brand-card border border-white/10 rounded-2xl p-4 relative overflow-hidden">
                 <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-3">
@@ -335,13 +329,9 @@
                 <i class="fa-solid fa-dumbbell text-base"></i>
                 <span class="text-[9px] font-bold">Treino</span>
             </button>
-            <button type="button" onclick="switchTab('builder')" id="navBuilder" class="flex flex-col items-center space-y-1 text-brand-textMuted">
-                <i class="fa-solid fa-hammer text-base"></i>
-                <span class="text-[9px] font-bold">Montar</span>
-            </button>
             <button type="button" onclick="switchTab('customWorkout')" id="navCustomWorkout" class="flex flex-col items-center space-y-1 text-brand-textMuted">
-                <i class="fa-solid fa-star text-base"></i>
-                <span class="text-[9px] font-bold">Personalizado</span>
+                <span class="text-base leading-none">💪🏽</span>
+                <span class="text-[9px] font-bold">Crie seu treino</span>
             </button>
             <button type="button" onclick="switchTab('progress')" id="navProgress" class="flex flex-col items-center space-y-1 text-brand-textMuted">
                 <i class="fa-solid fa-chart-line text-base"></i>
@@ -598,8 +588,7 @@
             document.getElementById('customMeta').value = '';
             document.getElementById('customTargets').value = '';
 
-            switchTab('customWorkout');
-            alert("Exercício criado e salvo na aba Treino Personalizado!");
+            alert("Exercício criado com sucesso!");
         }
 
         function renderCustomExercises() {
@@ -607,10 +596,9 @@
 
             if (customExercises.length === 0) {
                 container.innerHTML = `
-                    <div class="bg-brand-card border border-white/5 rounded-2xl p-8 text-center text-brand-textMuted">
-                        <i class="fa-solid fa-star text-3xl mb-3 text-brand-purple"></i>
+                    <div class="bg-brand-card border border-white/5 rounded-2xl p-6 text-center text-brand-textMuted">
+                        <i class="fa-solid fa-hammer text-2xl mb-2 text-brand-purple"></i>
                         <p class="text-xs">Nenhum exercício personalizado criado ainda.</p>
-                        <p class="text-[10px] text-brand-textMuted mt-1">Vá na aba "Montar" para adicionar os seus próprios treinos!</p>
                     </div>
                 `;
                 return;
@@ -891,31 +879,24 @@
 
         function switchTab(tab) {
             var workoutSection = document.getElementById('tabWorkout');
-            var builderSection = document.getElementById('tabBuilder');
             var customWorkoutSection = document.getElementById('tabCustomWorkout');
             var progressSection = document.getElementById('tabProgress');
             
             var navWorkout = document.getElementById('navWorkout');
-            var navBuilder = document.getElementById('navBuilder');
             var navCustomWorkout = document.getElementById('navCustomWorkout');
             var navProgress = document.getElementById('navProgress');
 
             workoutSection.classList.add('hidden');
-            builderSection.classList.add('hidden');
             customWorkoutSection.classList.add('hidden');
             progressSection.classList.add('hidden');
 
             navWorkout.className = "flex flex-col items-center space-y-1 text-brand-textMuted";
-            navBuilder.className = "flex flex-col items-center space-y-1 text-brand-textMuted";
             navCustomWorkout.className = "flex flex-col items-center space-y-1 text-brand-textMuted";
             navProgress.className = "flex flex-col items-center space-y-1 text-brand-textMuted";
 
             if (tab === 'workout') {
                 workoutSection.classList.remove('hidden');
                 navWorkout.className = "flex flex-col items-center space-y-1 text-brand-purple";
-            } else if (tab === 'builder') {
-                builderSection.classList.remove('hidden');
-                navBuilder.className = "flex flex-col items-center space-y-1 text-brand-purple";
             } else if (tab === 'customWorkout') {
                 customWorkoutSection.classList.remove('hidden');
                 navCustomWorkout.className = "flex flex-col items-center space-y-1 text-brand-purple";
