@@ -278,10 +278,9 @@
     <audio id="beepSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
     <script>
-        var SUPABASE_URL = 'https://llqrvogydcnxsgnuaqeq.supabase.co';[span_2](start_span)[span_2](end_span)
-        var SUPABASE_KEY = 'Sb_publishable_65kB7qIQ6nc45ZerxhMTwA_6Ww1kWWQ';
+        var SUPABASE_URL = 'https://llqrvogydcnxsgnuaqeq.supabase.co';
+        var SUPABASE_KEY = 'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxscXJ2b2d5ZGNueHNnbnVhcWVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NjYyNzcsImV4cCI6MjEwNjI0MjI3N30.Q09SLFqCbAUtdXMm1PkTUEhZRUWBCulrEPbfKLdfWjM';
 
-        // Requisição compativel com sb_publishable: envia APENAS o cabeçalho 'apikey'
         async function supabaseRequest(path, options = {}) {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 6000);
@@ -292,6 +291,7 @@
                     signal: controller.signal,
                     headers: {
                         'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
                         'Content-Type': 'application/json',
                         'Prefer': options.prefer || 'return=representation',
                         ...(options.headers || {})
@@ -763,7 +763,7 @@
 
         function deleteHistory(id) {
             if (confirm("Apagar este registro do histórico?")) {
-                workoutHistory = workoutHistory.filter(function(h) { return h.id === id; });
+                workoutHistory = workoutHistory.filter(function(h) { return h.id !== id; });
                 renderHistory();
                 syncDataToCloud();
             }
