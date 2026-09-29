@@ -10,6 +10,30 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Font: Inter & Montserrat -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+    
+    <!-- FIREBASE SDKs (v10) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB1DJnppzD75_6NwjutJNIIMeQEOWtSVXk",
+            authDomain: "kcalistenics.firebaseapp.com",
+            projectId: "kcalistenics",
+            storageBucket: "kcalistenics.firebasestorage.app",
+            messagingSenderId: "89019832269",
+            appId: "1:89019832269:web:1a8d29d7e774165076d684",
+            measurementId: "G-LSRPH78KGE"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.db = db;
+        window.firebaseTools = { doc, setDoc, getDoc, updateDoc };
+        window.dispatchEvent(new Event('firebaseReady'));
+    </script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -56,7 +80,7 @@
                     <i class="fa-solid fa-dumbbell text-brand-purple text-2xl"></i>
                 </div>
                 <h2 class="text-2xl font-display font-black text-white">7K'S <span class="text-brand-purple">CALISTENICS</span></h2>
-                <p class="text-xs text-brand-textMuted mt-1">Seu personal virtual 100% gratuito!</p>
+                <p class="text-xs text-brand-textMuted mt-1">Seu personal virtual na nuvem!</p>
             </div>
 
             <!-- ABAS LOGIN / CADASTRO -->
@@ -101,7 +125,7 @@
                     </div>
                 </div>
                 <button id="btnRegSubmit" type="submit" class="w-full mt-2 bg-brand-purple hover:bg-brand-purpleDark active:scale-95 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-brand-purple/30 text-sm">
-                    CRIAR CONTA
+                    CRIAR CONTA NA NUVEM
                 </button>
             </form>
         </div>
@@ -291,20 +315,11 @@
         var timerInterval = null;
         var timerTimeLeft = 60;
 
-        function getStoredUsers() {
-            var raw = localStorage.getItem('7ks_users_db');
-            return raw ? JSON.parse(raw) : {};
-        }
-
-        function saveUsersDB(db) {
-            localStorage.setItem('7ks_users_db', JSON.stringify(db));
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            var activeUser = localStorage.getItem('7ks_active_user');
+        window.addEventListener('firebaseReady', function() {
+            var activeUser = localStorage.getItem('7ks_firebase_active_user');
             if (activeUser) {
                 currentUser = activeUser;
-                loadFromLocal();
+                loadFromCloud();
             } else {
                 document.getElementById('authModal').classList.remove('hidden');
             }
@@ -330,88 +345,105 @@
             }
         }
 
-        function handleRegister(e) {
+        async function handleRegister(e) {
             e.preventDefault();
             var nick = document.getElementById('regNick').value.trim().toLowerCase();
             var pass = document.getElementById('regPass').value;
             var weight = parseFloat(document.getElementById('regWeight').value);
             var height = parseInt(document.getElementById('regHeight').value);
 
-            var db = getStoredUsers();
-            if (db[nick]) {
-                alert("Este apelido já está em uso! Escolha outro.");
-                return;
+            try {
+                const docRef = window.firebaseTools.doc(window.db, "usuarios", nick);
+                const docSnap = await window.firebaseTools.getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    alert("Este apelido já está em uso! Escolha outro.");
+                    return;
+                }
+
+                await window.firebaseTools.setDoc(docRef, {
+                    password: pass,
+                    profile: { nickname: nick, weight: weight, height: height },
+                    completedSets: {},
+                    waterMl: 0,
+                    history: []
+                });
+
+                currentUser = nick;
+                localStorage.setItem('7ks_firebase_active_user', currentUser);
+                document.getElementById('authModal').classList.add('hidden');
+                loadFromCloud();
+                alert("Conta criada com sucesso na nuvem!");
+            } catch (err) {
+                alert("Erro ao criar conta: " + err.message);
             }
-
-            db[nick] = {
-                password: pass,
-                profile: { nickname: nick, weight: weight, height: height },
-                completedSets: {},
-                waterMl: 0,
-                history: []
-            };
-
-            saveUsersDB(db);
-            currentUser = nick;
-            localStorage.setItem('7ks_active_user', currentUser);
-            document.getElementById('authModal').classList.add('hidden');
-            loadFromLocal();
-            alert("Conta criada com sucesso!");
         }
 
-        function handleLogin(e) {
+        async function handleLogin(e) {
             e.preventDefault();
             var nick = document.getElementById('loginUser').value.trim().toLowerCase();
             var pass = document.getElementById('loginPass').value;
 
-            var db = getStoredUsers();
-            if (!db[nick]) {
-                alert("Conta não encontrada! Mude para a aba 'Criar Conta' primeiro.");
-                return;
-            }
+            try {
+                const docRef = window.firebaseTools.doc(window.db, "usuarios", nick);
+                const docSnap = await window.firebaseTools.getDoc(docRef);
 
-            if (db[nick].password !== pass) {
-                alert("Senha incorreta!");
-                return;
-            }
+                if (!docSnap.exists()) {
+                    alert("Conta não encontrada! Mude para a aba 'Criar Conta' primeiro.");
+                    return;
+                }
 
-            currentUser = nick;
-            localStorage.setItem('7ks_active_user', currentUser);
-            document.getElementById('authModal').classList.add('hidden');
-            loadFromLocal();
+                var userData = docSnap.data();
+                if (userData.password !== pass) {
+                    alert("Senha incorreta!");
+                    return;
+                }
+
+                currentUser = nick;
+                localStorage.setItem('7ks_firebase_active_user', currentUser);
+                document.getElementById('authModal').classList.add('hidden');
+                loadFromCloud();
+            } catch (err) {
+                alert("Erro ao conectar: " + err.message);
+            }
         }
 
-        function loadFromLocal() {
+        async function loadFromCloud() {
             if (!currentUser) return;
-            var db = getStoredUsers();
-            var userData = db[currentUser];
-            if (!userData) return;
+            try {
+                const docRef = window.firebaseTools.doc(window.db, "usuarios", currentUser);
+                const docSnap = await window.firebaseTools.getDoc(docRef);
 
-            userProfile = userData.profile;
-            completedSets = userData.completedSets || {};
-            waterMl = userData.waterMl || 0;
-            workoutHistory = userData.history || [];
+                if (docSnap.exists()) {
+                    var userData = docSnap.data();
+                    userProfile = userData.profile;
+                    completedSets = userData.completedSets || {};
+                    waterMl = userData.waterMl || 0;
+                    workoutHistory = userData.history || [];
 
-            updateProfileDisplay();
-            renderExercises();
-            updateProgress();
-            updateWaterDisplay();
-            renderHistory();
+                    updateProfileDisplay();
+                    renderExercises();
+                    updateProgress();
+                    updateWaterDisplay();
+                    renderHistory();
+                }
+            } catch (e) {}
         }
 
-        function syncDataToLocal() {
+        async function syncDataToCloud() {
             if (!currentUser) return;
-            var db = getStoredUsers();
-            if (db[currentUser]) {
-                db[currentUser].completedSets = completedSets;
-                db[currentUser].waterMl = waterMl;
-                db[currentUser].history = workoutHistory;
-                saveUsersDB(db);
-            }
+            try {
+                const docRef = window.firebaseTools.doc(window.db, "usuarios", currentUser);
+                await window.firebaseTools.updateDoc(docRef, {
+                    completedSets: completedSets,
+                    waterMl: waterMl,
+                    history: workoutHistory
+                });
+            } catch (e) {}
         }
 
         function logout() {
-            localStorage.removeItem('7ks_active_user');
+            localStorage.removeItem('7ks_firebase_active_user');
             location.reload();
         }
 
@@ -492,7 +524,7 @@
             }
 
             updateProgress();
-            syncDataToLocal();
+            syncDataToCloud();
         }
 
         function openExerciseModal(exerciseId) {
@@ -562,7 +594,7 @@
         function addWater(amount) {
             waterMl = Math.max(0, waterMl + amount);
             updateWaterDisplay();
-            syncDataToLocal();
+            syncDataToCloud();
         }
 
         function updateWaterDisplay() {
@@ -574,7 +606,7 @@
                 completedSets = {};
                 renderExercises();
                 updateProgress();
-                syncDataToLocal();
+                syncDataToCloud();
             }
         }
 
@@ -606,9 +638,9 @@
 
             workoutHistory.unshift(record);
             renderHistory();
-            syncDataToLocal();
+            syncDataToCloud();
             switchTab('progress');
-            alert("Treino salvo com sucesso!");
+            alert("Treino salvo com sucesso na nuvem!");
         }
 
         function renderHistory() {
@@ -673,7 +705,7 @@
             if (newNote !== null) {
                 item.note = newNote.trim();
                 renderHistory();
-                syncDataToLocal();
+                syncDataToCloud();
             }
         }
 
@@ -681,7 +713,7 @@
             if (confirm("Apagar este registro do histórico?")) {
                 workoutHistory = workoutHistory.filter(function(h) { return h.id !== id; });
                 renderHistory();
-                syncDataToLocal();
+                syncDataToCloud();
             }
         }
 
