@@ -32,10 +32,10 @@
         .card-3d {
             transform-style: preserve-3d;
             transition: transform 0.1s ease-out;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(139, 92, 246, 0.25);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9), 0 0 35px rgba(139, 92, 246, 0.3);
         }
         .card-3d img {
-            transform: translateZ(35px);
+            transform: translateZ(40px);
         }
     </style>
 </head>
@@ -48,16 +48,14 @@
         </a>
     </div>
 
-    <!-- Container central com a Imagem 3D da Santa -->
+    <!-- Container central com a Imagem 3D da Santa 7kslow -->
     <div class="text-center max-w-xs w-full mt-10">
         <div class="perspective-container w-full py-4">
             <div id="card3D" class="card-3d bg-brand-card border border-brand-purple/40 rounded-3xl p-4 overflow-hidden relative text-center">
-                <div class="absolute inset-0 bg-gradient-to-tr from-brand-purple/15 to-transparent pointer-events-none"></div>
+                <div class="absolute inset-0 bg-gradient-to-tr from-brand-purple/20 to-transparent pointer-events-none"></div>
                 <div class="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl inline-block w-full">
-                    <!-- Imagem da Santa enviada -->
-                    <img src="https://i.ibb.co/6y4G12s/santa-3d.png" alt="Santa 3D - 7kslow" id="santaImg" class="w-full h-auto object-cover rounded-xl" style="display:none;" />
-                    <!-- Fallback / Exibição direta da imagem convertida -->
-                    <img src="data:image/jpeg;base64,..." alt="Santa 3D" class="w-full h-auto object-cover rounded-xl" id="fallbackSanta" />
+                    <!-- Imagem da Santa com o logo 7kslow -->
+                    <img src="santa.jpg" alt="Santa 3D - 7kslow" id="santaImg" class="w-full h-auto object-cover rounded-xl" />
                 </div>
             </div>
         </div>
@@ -67,13 +65,12 @@
     </div>
 
     <script>
-        // Transforma o link da imagem enviada para uma hospedagem direta estável embutida
-        const santaImg = document.getElementById('fallbackSanta');
-        // Usando a imagem carregada diretamente via link seguro temporário/permanente
-        santaImg.src = "https://images.unsplash.com/photo-1544717305-2782549b5136?q=80&w=600&auto=format&fit=crop"; 
-        
-        // Se quiser usar a imagem exata que você mandou direto do chat, atualize o link abaixo se necessário:
-        // Como o chat processou a imagem, salvei o link de referência visual adaptada para renderizar o efeito 3D perfeito.
+        // Caso prefira garantir que lê o ficheiro local se tiver colocado o nome 'santa.jpg' no repositório:
+        const img = document.getElementById('santaImg');
+        img.onerror = function() {
+            // Fallback caso o ficheiro local não tenha exatamente esse nome no GitHub
+            img.src = "https://i.ibb.co/6y4G12s/santa.jpg";
+        };
 
         // Configuração do Efeito 3D Interativo por Movimento
         const card = document.getElementById('card3D');
