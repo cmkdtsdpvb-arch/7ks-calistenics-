@@ -65,12 +65,30 @@
         .purple-glow {
             box-shadow: 0 0 20px rgba(139, 92, 246, 0.25);
         }
+        @keyframes floatAndRotate {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(1deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .maintenance-banner {
+            animation: floatAndRotate 3s ease-in-out infinite;
+            background: linear-gradient(135deg, #6D28D9, #8B5CF6, #A78BFA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #0A0A0C; }
         ::-webkit-scrollbar-thumb { background: #2D2D38; border-radius: 4px; }
     </style>
 </head>
-<body class="font-sans antialiased bg-brand-black text-white min-h-screen pb-24 select-none">
+<body class="font-sans antialiased bg-brand-black text-white min-h-screen pb-28 select-none">
+
+    <!-- AVISO DE MANUTENÇÃO FLUTUANTE -->
+    <div class="bg-brand-card/90 border-b border-brand-purple/30 py-2.5 px-4 text-center sticky top-0 z-50 backdrop-blur-md">
+        <h2 class="font-display font-black text-sm md:text-base tracking-wider maintenance-banner uppercase drop-shadow-md">
+            ⚠️ Estamos em manutenção !! ⚠️
+        </h2>
+    </div>
 
     <!-- MODAL DE AUTENTICAÇÃO -->
     <div id="authModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
@@ -151,7 +169,7 @@
     </div>
 
     <!-- CABEÇALHO -->
-    <header class="sticky top-0 z-40 bg-brand-black/90 backdrop-blur-md border-b border-white/5 px-4 py-3">
+    <header class="bg-brand-black/90 backdrop-blur-md border-b border-white/5 px-4 py-3">
         <div class="max-w-md mx-auto flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <div class="w-10 h-10 rounded-xl bg-brand-purple/20 border border-brand-purple/50 flex items-center justify-center">
@@ -308,6 +326,16 @@
 
     </main>
 
+    <!-- PLAYER DO SPOTIFY FLUTUANTE (CANTO INFERIOR ESQUERDO) -->
+    <div id="spotifyPlayerContainer" class="fixed bottom-20 left-4 z-45 bg-brand-card/95 border border-brand-purple/40 rounded-2xl p-2.5 shadow-2xl purple-glow flex items-center space-x-3 transition-all duration-300">
+        <div id="spotifyIconBtn" onclick="toggleSpotifyPlayer()" class="w-10 h-10 rounded-xl bg-green-500/20 border border-green-500/50 flex items-center justify-center text-green-400 cursor-pointer hover:bg-green-500/30">
+            <i class="fa-brands fa-spotify text-xl animate-pulse"></i>
+        </div>
+        <div id="spotifyWidgetWrapper" class="hidden sm:block">
+            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DWWY64wDtewQt?utm_source=generator&theme=0" width="220" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </div>
+    </div>
+
     <!-- CRONÔMETRO DE DESCANSO -->
     <div id="timerContainer" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-brand-card border border-brand-purple/60 px-5 py-3 rounded-2xl purple-glow flex items-center space-x-4 z-40 hidden">
         <div class="w-8 h-8 rounded-full bg-brand-purple/20 flex items-center justify-center text-brand-purple text-sm animate-pulse">
@@ -374,6 +402,11 @@
             }
             renderExercises();
         });
+
+        function toggleSpotifyPlayer() {
+            var wrapper = document.getElementById('spotifyWidgetWrapper');
+            wrapper.classList.toggle('hidden');
+        }
 
         function switchAuthTab(tab) {
             var loginForm = document.getElementById('loginForm');
