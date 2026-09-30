@@ -308,16 +308,13 @@
 
     </main>
 
-    <!-- PLAYER DO SOUNDCLOUD FLUTUANTE (CANTO INFERIOR ESQUERDO) -->
-    <div id="soundCloudPlayerContainer" class="fixed bottom-20 left-4 z-45 bg-brand-card/95 border border-brand-purple/40 rounded-2xl p-2.5 shadow-2xl purple-glow flex items-center space-x-3 transition-all duration-300">
-        <div id="scIconBtn" onclick="toggleSoundCloudPlayer()" class="w-10 h-10 rounded-xl bg-orange-500/20 border border-orange-500/50 flex items-center justify-center text-orange-400 cursor-pointer hover:bg-orange-500/30">
-            <i class="fa-solid fa-play text-lg animate-pulse"></i>
+    <!-- BOTÃO FLUTUANTE SOUNDCLOUD (CANTO INFERIOR ESQUERDO) -->
+    <a href="https://on.soundcloud.com/QuZGmZmxWVfXihhiKm" target="_blank" class="fixed bottom-20 left-4 z-45 bg-brand-card/95 border border-brand-purple/40 hover:border-orange-500 rounded-2xl px-3 py-2.5 shadow-2xl purple-glow flex items-center space-x-2 transition-all duration-300 active:scale-95 group">
+        <div class="w-8 h-8 rounded-xl bg-orange-500/20 border border-orange-500/50 flex items-center justify-center text-orange-400 group-hover:bg-orange-500 group-hover:text-white transition">
+            <i class="fa-solid fa-play text-xs animate-pulse"></i>
         </div>
-        <div id="scWidgetWrapper" class="hidden sm:block">
-            <a href="https://soundcloud.com" target="_blank" class="text-[10px] text-orange-400 font-bold underline block mb-1">Abrir SoundCloud 🎧</a>
-            <iframe width="180" height="60" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1144212716&color=%238b5cf6&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe>
-        </div>
-    </div>
+        <span class="text-xs font-bold text-white tracking-wide">Playlist SoundCloud</span>
+    </a>
 
     <!-- CRONÔMETRO DE DESCANSO -->
     <div id="timerContainer" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-brand-card border border-brand-purple/60 px-5 py-3 rounded-2xl purple-glow flex items-center space-x-4 z-40 hidden">
@@ -385,11 +382,6 @@
             }
             renderExercises();
         });
-
-        function toggleSoundCloudPlayer() {
-            var wrapper = document.getElementById('scWidgetWrapper');
-            wrapper.classList.toggle('hidden');
-        }
 
         function switchAuthTab(tab) {
             var loginForm = document.getElementById('loginForm');
