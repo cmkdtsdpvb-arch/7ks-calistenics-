@@ -68,19 +68,6 @@
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #0A0A0C; }
         ::-webkit-scrollbar-thumb { background: #2D2D38; border-radius: 4px; }
-
-        /* Estilos e Efeitos 3D para a Imagem */
-        .perspective-container {
-            perspective: 1000px;
-        }
-        .card-3d {
-            transform-style: preserve-3d;
-            transition: transform 0.1s ease-out;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(139, 92, 246, 0.2);
-        }
-        .card-3d img {
-            transform: translateZ(30px);
-        }
     </style>
 </head>
 <body class="font-sans antialiased bg-brand-black text-white min-h-screen pb-24 select-none">
@@ -241,19 +228,8 @@
             </div>
         </section>
 
-        <!-- ABA 2: CRIE SEU TREINO (COM A FOTO EM 3D INTERATIVA) -->
+        <!-- ABA 2: CRIE SEU TREINO -->
         <section id="tabCustomWorkout" class="space-y-4 hidden">
-            <div class="perspective-container w-full py-2">
-                <div id="card3D" class="card-3d bg-brand-card border border-brand-purple/40 rounded-3xl p-4 overflow-hidden relative text-center">
-                    <div class="absolute inset-0 bg-gradient-to-tr from-brand-purple/10 to-transparent pointer-events-none"></div>
-                    <h2 class="font-display font-extrabold text-base text-white mb-3">7K's & Special Edition</h2>
-                    <div class="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl inline-block max-w-[280px]">
-                        <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?q=80&w=600&auto=format&fit=crop" data-real-src="https://i.imgur.com/7kslow_placeholder.png" alt="7kslow 3D" class="w-full h-auto object-cover rounded-xl" id="custom3dImage">
-                    </div>
-                    <p class="text-[11px] text-brand-textMuted mt-3">Mova o dedo ou o rato sobre a imagem para sentir o efeito 3D</p>
-                </div>
-            </div>
-
             <div class="bg-brand-card border border-white/10 rounded-2xl p-5">
                 <div class="flex items-center space-x-3 mb-4">
                     <div class="w-10 h-10 rounded-xl bg-brand-purple/20 border border-brand-purple flex items-center justify-center text-brand-purple text-lg">
@@ -402,40 +378,7 @@
                 document.getElementById('authModal').classList.remove('hidden');
             }
             renderExercises();
-            init3DEffect();
         });
-
-        // Configuração do Efeito 3D Interativo por Movimento
-        function init3DEffect() {
-            const card = document.getElementById('card3D');
-            if (!card) return;
-
-            function handleMove(clientX, clientY) {
-                const rect = card.getBoundingClientRect();
-                const x = clientX - rect.left;
-                const y = clientY - rect.top;
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const rotateX = ((y - centerY) / centerY) * -12;
-                const rotateY = ((x - centerX) / centerX) * 12;
-
-                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-            }
-
-            card.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
-            card.addEventListener('touchmove', (e) => {
-                if(e.touches.length > 0) {
-                    handleMove(e.touches[0].clientX, e.touches[0].clientY);
-                }
-            }, {passive: true});
-
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = `rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
-            });
-            card.addEventListener('touchend', () => {
-                card.style.transform = `rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
-            });
-        }
 
         function switchAuthTab(tab) {
             var loginForm = document.getElementById('loginForm');
