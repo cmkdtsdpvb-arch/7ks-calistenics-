@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estudo - 7k's Calistenics</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            black: '#0A0A0C',
+                            card: '#121216',
+                            purple: '#8B5CF6',
+                            purpleLight: '#A78BFA'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Animação personalizada para flutuar e rodar */
+        @keyframes floatAndRotate {
+            0% { transform: translateY(0px) rotate(0deg) scale(1); }
+            50% { transform: translateY(-15px) rotate(5deg) scale(1.05); }
+            100% { transform: translateY(0px) rotate(0deg) scale(1); }
+        }
+
+        .animar-interrogacao {
+            animation: floatAndRotate 4s ease-in-out infinite;
+            background: linear-gradient(135deg, #6D28D9, #8B5CF6, #A78BFA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 25px rgba(139, 92, 246, 0.4));
+        }
+    </style>
+</head>
+<body class="bg-brand-black text-white min-h-screen flex flex-col items-center justify-center select-none overflow-hidden m-0">
+
+    <!-- Botão de Voltar ao App -->
+    <div class="absolute top-6 left-6">
+        <a href="index.html" class="bg-brand-card border border-brand-purple/40 px-4 py-2.5 rounded-xl text-xs font-bold text-brand-purpleLight hover:bg-brand-purple hover:text-white transition shadow-lg flex items-center gap-2">
+            <i class="fa-solid fa-arrow-left"></i> Voltar ao App
+        </a>
+    </div>
+
+    <!-- Tela centralizada com o ? grande e animado -->
+    <div class="text-center">
+        <h1 class="text-9xl font-black animar-interrogacao tracking-tighter">
+            ?
+        </h1>
+        <p class="text-xs text-gray-400 mt-6 tracking-widest uppercase font-semibold">
+            7k's Calistenics — Área de Testes & Estudos
+        </p>
+    </div>
+
+</body>
+</html>
