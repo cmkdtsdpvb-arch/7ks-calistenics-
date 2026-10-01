@@ -135,7 +135,7 @@
         </div>
     </div>
 
-    <!-- TUTORIAL / GUIA DE INTRODUÇÃO (PASSO A PASSO) -->
+    <!-- TUTORIAL / GUIA DE INTRODUÇÃO -->
     <div id="tutorialModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-brand-card border border-brand-purple/60 rounded-3xl p-6 w-full max-w-md purple-glow space-y-4 text-center">
             <div class="w-14 h-14 bg-brand-purple/20 border border-brand-purple rounded-2xl flex items-center justify-center mx-auto">
@@ -144,7 +144,7 @@
             <div>
                 <h3 id="tutorialTitle" class="font-display font-black text-xl text-white">Bem-vindo ao 7k's Calistenics!</h3>
                 <p id="tutorialText" class="text-xs text-brand-textMuted mt-2 leading-relaxed">
-                    Este aplicativo foi criado para gerir os seus treinos de calistenia em equipa, acompanhar o seu progresso e manter o foco nos resultados.
+                    Este aplicativo foi criado para gerir os seus treinos de calistenia em equipa, registar o seu progresso na nuvem e evoluir lado a lado.
                 </p>
             </div>
 
@@ -194,7 +194,7 @@
                 </div>
             </div>
             <div class="flex items-center space-x-2">
-                <button type="button" onclick="openTutorial()" class="text-xs bg-brand-purple/20 border border-brand-purple/40 text-brand-purpleLight font-bold px-2.5 py-1.5 rounded-lg hover:bg-brand-purple hover:text-white transition" title="Ver Guia de Introdução">
+                <button type="button" onclick="openTutorial()" class="text-xs bg-brand-purple/20 border border-brand-purple/40 text-brand-purpleLight font-bold px-2.5 py-1.5 rounded-lg hover:bg-brand-purple hover:text-white transition" title="Ver Guia">
                     <i class="fa-solid fa-circle-question"></i> Guia
                 </button>
                 <a href="estudo.html" class="text-xs bg-brand-purple text-white font-bold px-3 py-1.5 rounded-lg shadow-md shadow-brand-purple/30 hover:bg-brand-purpleDark transition">
@@ -275,6 +275,10 @@
                             <p class="text-xs text-brand-textMuted">Desenvolvido por <a href="https://instagram.com/eufilipin7k" target="_blank" class="text-brand-purpleLight font-bold underline hover:text-white transition">@eufilipin7k</a></p>
                         </div>
                     </div>
+                    <!-- BOTÃO EDITAR PERFIL -->
+                    <button type="button" onclick="editProfile()" class="text-xs bg-brand-purple/20 border border-brand-purple/40 text-brand-purpleLight font-bold px-3 py-1.5 rounded-xl hover:bg-brand-purple hover:text-white transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-pen-to-square"></i> Editar
+                    </button>
                 </div>
 
                 <div class="grid grid-cols-4 gap-2 text-center mb-4">
@@ -374,7 +378,6 @@
         var timerInterval = null;
         var timerTimeLeft = 60;
 
-        // SISTEMA DE TUTORIAL (INTRODUÇÃO)
         var currentTutorialStep = 0;
         var tutorialSteps = [
             {
@@ -450,8 +453,6 @@
                 localStorage.setItem('7ks_firebase_active_user', currentUser);
                 document.getElementById('authModal').classList.add('hidden');
                 loadFromCloud();
-
-                // Exibe o tutorial logo após criar conta
                 openTutorial();
             } catch (err) {
                 alert("Erro ao criar conta: " + err.message);
@@ -527,7 +528,10 @@
 
                 if (docSnap.exists()) {
                     var userData = docSnap.data();
-                    userProfile = userData.profile;
+                    userProfile = userData.profile || {};
+                    // Garante valores padrão caso venha vazio de contas anteriores
+                    if (!userProfile.age) userProfile.age = 25;
+                    
                     completedSets = userData.completedSets || {};
                     waterMl = userData.waterMl || 0;
                     workoutHistory = userData.history || [];
@@ -546,11 +550,31 @@
             try {
                 const docRef = window.firebaseTools.doc(window.db, "usuarios", currentUser);
                 await window.firebaseTools.updateDoc(docRef, {
+                    profile: userProfile,
                     completedSets: completedSets,
                     waterMl: waterMl,
                     history: workoutHistory
                 });
             } catch (e) {}
+        }
+
+        // FUNÇÃO EDITAR PERFIL
+        async function editProfile() {
+            if (!userProfile) return;
+            var newAge = prompt("Atualize a sua idade:", userProfile.age || 25);
+            if (newAge === null) return;
+            var newWeight = prompt("Atualize o seu peso (kg):", userProfile.weight || 75);
+            if (newWeight === null) return;
+            var newHeight = prompt("Atualize a sua altura (cm):", userProfile.height || 175);
+            if (newHeight === null) return;
+
+            userProfile.age = parseInt(newAge) || userProfile.age;
+            userProfile.weight = parseFloat(newWeight) || userProfile.weight;
+            userProfile.height = parseInt(newHeight) || userProfile.height;
+
+            updateProfileDisplay();
+            await syncDataToCloud();
+            alert("Perfil atualizado com sucesso!");
         }
 
         function logout() {
@@ -562,7 +586,7 @@
             if (!userProfile) return;
             document.getElementById('userWelcome').textContent = `Bora treinar, ${userProfile.nickname}!`;
             document.getElementById('profileNameDisplay').textContent = userProfile.nickname;
-            document.getElementById('profileAgeDisplay').textContent = `${userProfile.age || '--'} anos`;
+            document.getElementById('profileAgeDisplay').textContent = `${userProfile.age || 25} anos`;
             document.getElementById('profileWeightDisplay').textContent = `${userProfile.weight} kg`;
             document.getElementById('profileHeightDisplay').textContent = `${userProfile.height} cm`;
 
@@ -580,11 +604,11 @@
             const content = document.getElementById('aiWorkoutContent');
             
             container.classList.remove('hidden');
-            content.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> A analisar dados biométricos (Idade: ' + userProfile.age + ' anos, Peso: ' + userProfile.weight + 'kg)...';
+            content.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> A analisar dados biométricos (Idade: ' + (userProfile.age || 25) + ' anos, Peso: ' + userProfile.weight + 'kg)...';
 
             setTimeout(() => {
                 const peso = userProfile.weight;
-                const idade = userProfile.age;
+                const idade = userProfile.age || 25;
                 const altura = userProfile.height;
                 const imc = (peso / ((altura/100)*(altura/100))).toFixed(1);
 
