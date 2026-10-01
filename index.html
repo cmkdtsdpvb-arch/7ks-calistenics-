@@ -264,13 +264,27 @@
 
         <!-- ABA 2: ALONGAMENTO -->
         <section id="tabStretching" class="space-y-4 hidden">
-            <div class="bg-brand-card border border-white/10 rounded-2xl p-4 relative overflow-hidden">
-                <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 mb-1">FLEXIBILIDADE</span>
-                <h2 class="text-xl font-display font-extrabold text-white">Área de Alongamento</h2>
-                <p class="text-xs text-brand-textMuted mt-1">Realize estes alongamentos pós-treino ou nos dias de descanso para soltar a musculatura.</p>
+            <div class="bg-brand-card border border-white/10 rounded-2xl p-4 relative overflow-hidden space-y-2">
+                <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">FLEXIBILIDADE</span>
+                <h2 class="text-xl font-display font-extrabold text-white">Alongamentos Eficazes</h2>
+                <p class="text-xs text-brand-textMuted leading-relaxed">
+                    Para melhorar a flexibilidade geral do corpo de forma segura, o ideal é focar nos principais grupos musculares. O segredo está em manter a respiração constante e nunca forçar a ponto de sentir dor aguda — o limite é um desconforto leve de alongamento.
+                </p>
             </div>
 
             <div id="stretchingList" class="space-y-4"></div>
+
+            <!-- DICAS IMPORTANTES -->
+            <div class="bg-brand-card border border-emerald-500/30 rounded-2xl p-4 space-y-3">
+                <h3 class="text-sm font-display font-bold text-emerald-400 flex items-center gap-2">
+                    <i class="fa-solid fa-lightbulb"></i> Dicas importantes para praticar:
+                </h3>
+                <ul class="text-xs text-brand-textMuted space-y-2 list-disc pl-4 leading-relaxed">
+                    <li><strong class="text-white">Aquecimento:</strong> Nunca faça alongamentos estáticos com os músculos totalmente frios. Faça uma caminhada leve ou movimente as articulações antes.</li>
+                    <li><strong class="text-white">Respiração:</strong> Respire de forma lenta e profunda. Exalar o ar ajuda o corpo a relaxar e aprofundar o alongamento.</li>
+                    <li><strong class="text-white">Constância:</strong> A flexibilidade evolui com a prática regular (2 a 3 vezes por semana já trazem ótimos resultados).</li>
+                </ul>
+            </div>
         </section>
 
         <!-- ABA 3: PROGRESSO / HISTÓRICO / IA -->
@@ -352,7 +366,7 @@
         </button>
     </div>
 
-    <!-- NAVEGAÇÃO INFERIOR (3 ABAS) -->
+    <!-- NAVEGAÇÃO INFERIOR -->
     <nav class="fixed bottom-0 left-0 right-0 bg-brand-black/95 backdrop-blur-lg border-t border-white/10 px-4 py-3 z-40">
         <div class="max-w-md mx-auto flex justify-around">
             <button type="button" onclick="switchTab('workout')" id="navWorkout" class="flex flex-col items-center space-y-1 text-brand-purple">
@@ -384,11 +398,52 @@
             { id: 'elevacao_lateral', name: 'Elevação Lateral', meta: '5×5 (25 repetições)', sets: 5, targets: 'Ombros.', img: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/3VcKaXpzqRo', steps: ['Eleve os braços até à altura dos ombros.', 'Desça controlando.'] }
         ];
 
-        var stretches = [
-            { id: 'along_peito', name: 'Alongamento de Peitoral', duration: '30 seg por lado', targets: 'Peitoral e ombros.', img: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/iod3sACpL4w', steps: ['Apoie o braço esticado numa parede ou poste.', 'Rotacione o tronco levemente para fora até sentir alongar o peito.'] },
-            { id: 'along_costas', name: 'Alongamento de Costas (Gato/Vaca)', duration: '1 minuto', targets: 'Coluna e grande dorsal.', img: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/eGo4IYlbE5g', steps: ['Apoie-se em quatro apoios (joelhos e mãos).', 'Alterne arqueando a coluna para cima e depois para baixo devagar.'] },
-            { id: 'along_pernas', name: 'Alongamento de Isquiotibiais', duration: '30 seg por perna', targets: 'Parte posterior das coxas.', img: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/G2eJ-A_xPUI', steps: ['Estique uma perna à frente com o calcanhar no chão.', 'Incline o tronco à frente mantendo a coluna reta.'] },
-            { id: 'along_ombros', name: 'Alongamento de Ombros cruzado', duration: '30 seg por braço', targets: 'Deltoides e parte posterior.', img: 'https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/3VcKaXpzqRo', steps: ['Puxe um braço esticado contra o peito usando o outro braço.', 'Mantenha os ombros relaxados para baixo.'] }
+        var stretching = [
+            { 
+                id: 'along_posterior', 
+                name: '1. Alongamento de Posterior de Coxa', 
+                duration: '20 a 30 segundos', 
+                targets: 'Músculos posteriores da coxa (isquiotibiais) e lombar.', 
+                img: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=600&auto=format&fit=crop', 
+                videoUrl: 'https://www.youtube.com/embed/G2eJ-A_xPUI', 
+                steps: ['Sente-se no chão com as pernas estendidas à sua frente.', 'Incline o tronco para a frente a partir dos quadris (mantendo a coluna o mais reta possível) e tente alcançar os pés ou os tornozelos.'] 
+            },
+            { 
+                id: 'along_quadriceps', 
+                name: '2. Alongamento de Quadríceps', 
+                duration: '20 a 30 seg por perna', 
+                targets: 'Parte da frente da coxa (quadríceps) e flexores do quadril.', 
+                img: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=600&auto=format&fit=crop', 
+                videoUrl: 'https://www.youtube.com/embed/aclHkVaku9U', 
+                steps: ['Fique em pé (apoiando-se em uma parede se precisar de equilíbrio).', 'Dobre um joelho, levando o calcanhar em direção aos glúteos, e segure o pé com a mão do mesmo lado.', 'Mantenha os joelhos alinhados lado a lado.'] 
+            },
+            { 
+                id: 'along_quadril', 
+                name: '3. Flexor do Quadril (Posição de Afundo)', 
+                duration: '20 a 30 seg de cada lado', 
+                targets: 'Flexores do quadril e psoas (ótimo para quem passa muito tempo sentado).', 
+                img: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=600&auto=format&fit=crop', 
+                videoUrl: 'https://www.youtube.com/embed/iod3sACpL4w', 
+                steps: ['Dê um passo grande para a frente, flexionando o joelho da frente a 90 graus.', 'O joelho de trás apoia suavemente no chão.', 'Empurre o quadril levemente para a frente e para baixo.'] 
+            },
+            { 
+                id: 'along_peito', 
+                name: '4. Peitoral e Ombros (Entrelaçar)', 
+                duration: '20 segundos', 
+                targets: 'Peitoral, parte anterior dos ombros e melhora da postura.', 
+                img: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=600&auto=format&fit=crop', 
+                videoUrl: 'https://www.youtube.com/embed/3VcKaXpzqRo', 
+                steps: ['Em pé ou sentado, entrelace os dedos das mãos atrás das costas.', 'Estenda os braços para trás e afaste levemente as mãos dos glúteos, abrindo o peito.'] 
+            },
+            { 
+                id: 'along_panturrilha', 
+                name: '5. Alongamento de Panturrilhas', 
+                duration: '20 a 30 seg por perna', 
+                targets: 'Músculos da panturrilha e tendão de Aquiles.', 
+                img: 'https://images.unsplash.com/photo-1434682881908-b43d0467b798?q=80&w=600&auto=format&fit=crop', 
+                videoUrl: 'https://www.youtube.com/embed/gwLzBJYoWlI', 
+                steps: ['Fique de frente para uma parede e apoie as mãos nela.', 'Dê um passo para trás com uma das pernas, mantendo o calcanhar firmemente no chão e a perna estendida.', 'Flexione o joelho da perna da frente.'] 
+            }
         ];
 
         var currentUser = null;
@@ -720,11 +775,11 @@
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
                         <div class="absolute bottom-2 left-3 right-3 flex justify-between items-end">
                             <div>
-                                <h3 class="font-display font-extrabold text-base text-white leading-snug">${st.name}</h3>
-                                <p class="text-[11px] font-semibold text-emerald-400">${st.duration}</p>
+                                <h3 class="font-display font-extrabold text-sm text-white leading-snug">${st.name}</h3>
+                                <p class="text-[11px] font-semibold text-emerald-400">Tempo: ${st.duration}</p>
                             </div>
                             <button type="button" onclick="openExerciseModal('${st.id}', true)" class="text-[10px] font-bold bg-emerald-600/60 border border-emerald-500/50 hover:bg-emerald-600 text-white px-2.5 py-1.5 rounded-lg flex items-center gap-1 backdrop-blur-md">
-                                <i class="fa-solid fa-circle-play text-emerald-300"></i> Ver Passo a Passo
+                                <i class="fa-solid fa-circle-play text-emerald-300"></i> Ver Vídeo
                             </button>
                         </div>
                     </div>
@@ -753,10 +808,10 @@
         }
 
         function openExerciseModal(id, isStretch) {
-            var item = isStretch ? stretches.find(s => s.id === id) : exercises.find(e => e.id === id);
+            var item = isStretch ? stretching.find(s => s.id === id) : exercises.find(e => e.id === id);
             if (!item) return;
 
-            document.getElementById('modalExerciseTitle').textContent = `Como executar: ${item.name}`;
+            document.getElementById('modalExerciseTitle').textContent = item.name;
             document.getElementById('modalVideoFrame').src = item.videoUrl;
 
             var stepsList = document.getElementById('modalStepsList');
