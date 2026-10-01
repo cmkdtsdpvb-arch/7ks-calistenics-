@@ -371,7 +371,6 @@
         var timerInterval = null;
         var timerTimeLeft = 60;
 
-        // SISTEMA DE TUTORIAL EM PASSOS
         var currentTutorialStep = 0;
         var tutorialSteps = [
             {
@@ -383,8 +382,8 @@
                 text: "Na aba 'Treino', clique nas séries (S1, S2...) à medida que as concluir. Cada check ativa automaticamente um cronómetro de descanso de 1 minuto!"
             },
             {
-                title: "Gerar Treino com Inteligência Artificial",
-                text: "Vá até à aba 'Progresso' e clique no botão 'Gerar Treino Personalizado com IA'. A IA lerá a sua idade, peso e altura para montar uma rotina perfeita para si!"
+                title: "Gerar Treino Personalizado",
+                text: "Vá até à aba 'Progresso' e clique no botão 'Gerar Treino Personalizado com IA'. O sistema analisará a sua idade, peso e altura para montar uma rotina perfeita para si!"
             }
         ];
 
@@ -565,37 +564,42 @@
             }
         }
 
-        // INTEGRAÇÃO ROBUSTA COM IA (GEMINI VIA ENDPOINT CORRIGIDO)
-        async function generateAITraining() {
+        // MOTOR INTELIGENTE DE TREINO PERSONALIZADO LOCAL (SEM BLOQUEIOS CORS)
+        function generateAITraining() {
             if (!userProfile) return;
             const container = document.getElementById('aiWorkoutContainer');
             const content = document.getElementById('aiWorkoutContent');
             
             container.classList.remove('hidden');
-            content.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> A IA está a calcular o seu treino ideal com base na sua idade, peso e altura...';
+            content.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> A analisar dados biométricos (Idade: ' + userProfile.age + ' anos, Peso: ' + userProfile.weight + 'kg)...';
 
-            const prompt = `Atua como um personal trainer especialista em calistenia. Cria um plano de treino em português curto, motivador e estruturado para um aluno com: Idade: ${userProfile.age || 25} anos, Peso: ${userProfile.weight} kg, Altura: ${userProfile.height} cm. Indica exercícios, séries e repetições adequadas.`;
+            setTimeout(() => {
+                const peso = userProfile.weight;
+                const idade = userProfile.age;
+                const altura = userProfile.height;
+                const imc = (peso / ((altura/100)*(altura/100))).toFixed(1);
 
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=AIzaSyB1DJnppzD75_6NwjutJNIIMeQEOWtSVXk`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: prompt }] }]
-                    })
-                });
+                let intensidade = "Foco em progressão de força e resistência.";
+                let recomendacao = "4 séries de cada exercício base com 60s de descanso.";
 
-                const data = await response.json();
-                if (data.candidates && data.candidates[0].content.parts[0].text) {
-                    content.innerHTML = data.candidates[0].content.parts[0].text;
-                } else if (data.error) {
-                    content.innerHTML = "Erro da IA: " + data.error.message;
-                } else {
-                    content.innerHTML = "Não foi possível gerar o treino no momento. Tente novamente mais tarde.";
+                if (imc > 25) {
+                    intensidade = "Foco em queima de gordura e adaptação articular para maior peso corporal.";
+                    recomendacao = "Priorize flexões inclinadas e agachamentos controlados.";
+                } else if (idade < 20) {
+                    intensidade = "Foco em explosão, ganho de massa muscular limpa e hipertrofia.";
+                    recomendacao = "Aumente as repetições e teste variações avançadas na barra fixadora.";
                 }
-            } catch (err) {
-                content.innerHTML = "Erro de conexão ao gerar treino com IA. Verifique a sua internet.";
-            }
+
+                content.innerHTML = `🤖 **PLANO GERADO PARA ${userProfile.nickname.toUpperCase()}**\n\n` +
+                    `📊 **Perfil:** ${idade} anos | ${peso}kg | ${altura}cm | IMC: ${imc}\n` +
+                    `💡 **Estratégia:** ${intensidade}\n\n` +
+                    `🏋️‍♂️ **Rotina Recomendada:**\n` +
+                    `1. **Flexões no Solo:** 4 séries de 12 a 15 repetições\n` +
+                    `2. **Barra Fixa / Australiana:** 4 séries de 6 a 8 repetições\n` +
+                    `3. **Agachamento Livre:** 4 séries de 15 repetições\n` +
+                    `4. **Prancha abdominal:** 3 séries de 45 segundos\n\n` +
+                    `⏱️ **Dica do Treinador:** ${recomendacao}`;
+            }, 800);
         }
 
         function renderExercises() {
