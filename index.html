@@ -262,7 +262,18 @@
             </div>
         </section>
 
-        <!-- ABA 2: PROGRESSO / HISTÓRICO / IA -->
+        <!-- ABA 2: ALONGAMENTO -->
+        <section id="tabStretching" class="space-y-4 hidden">
+            <div class="bg-brand-card border border-white/10 rounded-2xl p-4 relative overflow-hidden">
+                <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 mb-1">FLEXIBILIDADE</span>
+                <h2 class="text-xl font-display font-extrabold text-white">Área de Alongamento</h2>
+                <p class="text-xs text-brand-textMuted mt-1">Realize estes alongamentos pós-treino ou nos dias de descanso para soltar a musculatura.</p>
+            </div>
+
+            <div id="stretchingList" class="space-y-4"></div>
+        </section>
+
+        <!-- ABA 3: PROGRESSO / HISTÓRICO / IA -->
         <section id="tabProgress" class="space-y-4 hidden">
             <div class="bg-brand-card border border-white/10 rounded-2xl p-4 relative overflow-hidden">
                 <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-3">
@@ -341,12 +352,16 @@
         </button>
     </div>
 
-    <!-- NAVEGAÇÃO INFERIOR -->
+    <!-- NAVEGAÇÃO INFERIOR (3 ABAS) -->
     <nav class="fixed bottom-0 left-0 right-0 bg-brand-black/95 backdrop-blur-lg border-t border-white/10 px-4 py-3 z-40">
         <div class="max-w-md mx-auto flex justify-around">
             <button type="button" onclick="switchTab('workout')" id="navWorkout" class="flex flex-col items-center space-y-1 text-brand-purple">
                 <i class="fa-solid fa-dumbbell text-base"></i>
                 <span class="text-[10px] font-bold">Treino</span>
+            </button>
+            <button type="button" onclick="switchTab('stretching')" id="navStretching" class="flex flex-col items-center space-y-1 text-brand-textMuted">
+                <i class="fa-solid fa-child-reaching text-base"></i>
+                <span class="text-[10px] font-bold">Alongamento</span>
             </button>
             <button type="button" onclick="switchTab('progress')" id="navProgress" class="flex flex-col items-center space-y-1 text-brand-textMuted">
                 <i class="fa-solid fa-chart-line text-base"></i>
@@ -369,6 +384,13 @@
             { id: 'elevacao_lateral', name: 'Elevação Lateral', meta: '5×5 (25 repetições)', sets: 5, targets: 'Ombros.', img: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/3VcKaXpzqRo', steps: ['Eleve os braços até à altura dos ombros.', 'Desça controlando.'] }
         ];
 
+        var stretches = [
+            { id: 'along_peito', name: 'Alongamento de Peitoral', duration: '30 seg por lado', targets: 'Peitoral e ombros.', img: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/iod3sACpL4w', steps: ['Apoie o braço esticado numa parede ou poste.', 'Rotacione o tronco levemente para fora até sentir alongar o peito.'] },
+            { id: 'along_costas', name: 'Alongamento de Costas (Gato/Vaca)', duration: '1 minuto', targets: 'Coluna e grande dorsal.', img: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/eGo4IYlbE5g', steps: ['Apoie-se em quatro apoios (joelhos e mãos).', 'Alterne arqueando a coluna para cima e depois para baixo devagar.'] },
+            { id: 'along_pernas', name: 'Alongamento de Isquiotibiais', duration: '30 seg por perna', targets: 'Parte posterior das coxas.', img: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/G2eJ-A_xPUI', steps: ['Estique uma perna à frente com o calcanhar no chão.', 'Incline o tronco à frente mantendo a coluna reta.'] },
+            { id: 'along_ombros', name: 'Alongamento de Ombros cruzado', duration: '30 seg por braço', targets: 'Deltoides e parte posterior.', img: 'https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/3VcKaXpzqRo', steps: ['Puxe um braço esticado contra o peito usando o outro braço.', 'Mantenha os ombros relaxados para baixo.'] }
+        ];
+
         var currentUser = null;
         var userProfile = null;
         var completedSets = {};
@@ -389,8 +411,8 @@
                 text: "Na aba 'Treino', clique nas séries (S1, S2...) à medida que as concluir. Cada check ativa automaticamente um cronómetro inteligente de descanso de 1 minuto!"
             },
             {
-                title: "Gerar Treino Personalizado com IA",
-                text: "Vá até à aba 'Progresso' e clique no botão 'Gerar Treino Personalizado com IA'. O sistema analisará a sua idade, peso e altura para montar uma rotina perfeita para si!"
+                title: "Área de Alongamento e IA",
+                text: "Use a aba 'Alongamento' para flexibilidade e a aba 'Progresso' para gerar treinos personalizados com IA baseados no seu peso e altura."
             }
         ];
 
@@ -403,6 +425,7 @@
                 document.getElementById('authModal').classList.remove('hidden');
             }
             renderExercises();
+            renderStretching();
         });
 
         function switchAuthTab(tab) {
@@ -529,7 +552,6 @@
                 if (docSnap.exists()) {
                     var userData = docSnap.data();
                     userProfile = userData.profile || {};
-                    // Garante valores padrão caso venha vazio de contas anteriores
                     if (!userProfile.age) userProfile.age = 25;
                     
                     completedSets = userData.completedSets || {};
@@ -538,6 +560,7 @@
 
                     updateProfileDisplay();
                     renderExercises();
+                    renderStretching();
                     updateProgress();
                     updateWaterDisplay();
                     renderHistory();
@@ -558,7 +581,6 @@
             } catch (e) {}
         }
 
-        // FUNÇÃO EDITAR PERFIL
         async function editProfile() {
             if (!userProfile) return;
             var newAge = prompt("Atualize a sua idade:", userProfile.age || 25);
@@ -597,14 +619,13 @@
             }
         }
 
-        // MOTOR DE TREINO PERSONALIZADO COM IA LOCAL
         function generateAITraining() {
             if (!userProfile) return;
             const container = document.getElementById('aiWorkoutContainer');
             const content = document.getElementById('aiWorkoutContent');
             
             container.classList.remove('hidden');
-            content.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> A analisar dados biométricos (Idade: ' + (userProfile.age || 25) + ' anos, Peso: ' + userProfile.weight + 'kg)...';
+            content.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> A analisar dados biométricos...';
 
             setTimeout(() => {
                 const peso = userProfile.weight;
@@ -667,7 +688,7 @@
                                 <h3 class="font-display font-extrabold text-lg text-white leading-snug">${ex.name}</h3>
                                 <p class="text-xs font-semibold text-brand-purpleLight">${ex.meta}</p>
                             </div>
-                            <button type="button" onclick="openExerciseModal('${ex.id}')" class="text-[10px] font-bold bg-brand-purple/30 border border-brand-purple/50 hover:bg-brand-purple text-white px-2.5 py-1.5 rounded-lg flex items-center gap-1 backdrop-blur-md">
+                            <button type="button" onclick="openExerciseModal('${ex.id}', false)" class="text-[10px] font-bold bg-brand-purple/30 border border-brand-purple/50 hover:bg-brand-purple text-white px-2.5 py-1.5 rounded-lg flex items-center gap-1 backdrop-blur-md">
                                 <i class="fa-solid fa-circle-play text-brand-purpleLight"></i> Como executar
                             </button>
                         </div>
@@ -680,6 +701,36 @@
                             ${buttonsHTML}
                         </div>
                     </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderStretching() {
+            var container = document.getElementById('stretchingList');
+            container.innerHTML = '';
+
+            stretching.forEach(function(st) {
+                var card = document.createElement('div');
+                card.className = "bg-brand-card border border-white/10 rounded-2xl overflow-hidden shadow-lg p-3.5 space-y-3";
+
+                card.innerHTML = `
+                    <div class="relative h-32 w-full overflow-hidden rounded-xl">
+                        <img src="${st.img}" alt="${st.name}" class="w-full h-full object-cover object-center">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                        <div class="absolute bottom-2 left-3 right-3 flex justify-between items-end">
+                            <div>
+                                <h3 class="font-display font-extrabold text-base text-white leading-snug">${st.name}</h3>
+                                <p class="text-[11px] font-semibold text-emerald-400">${st.duration}</p>
+                            </div>
+                            <button type="button" onclick="openExerciseModal('${st.id}', true)" class="text-[10px] font-bold bg-emerald-600/60 border border-emerald-500/50 hover:bg-emerald-600 text-white px-2.5 py-1.5 rounded-lg flex items-center gap-1 backdrop-blur-md">
+                                <i class="fa-solid fa-circle-play text-emerald-300"></i> Ver Passo a Passo
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-xs text-brand-textMuted leading-relaxed">
+                        <strong class="text-white">Foco:</strong> ${st.targets}
+                    </p>
                 `;
                 container.appendChild(card);
             });
@@ -701,16 +752,16 @@
             syncDataToCloud();
         }
 
-        function openExerciseModal(exerciseId) {
-            var ex = exercises.find(function(item) { return item.id === exerciseId; });
-            if (!ex) return;
+        function openExerciseModal(id, isStretch) {
+            var item = isStretch ? stretches.find(s => s.id === id) : exercises.find(e => e.id === id);
+            if (!item) return;
 
-            document.getElementById('modalExerciseTitle').textContent = `Como executar: ${ex.name}`;
-            document.getElementById('modalVideoFrame').src = ex.videoUrl;
+            document.getElementById('modalExerciseTitle').textContent = `Como executar: ${item.name}`;
+            document.getElementById('modalVideoFrame').src = item.videoUrl;
 
             var stepsList = document.getElementById('modalStepsList');
             stepsList.innerHTML = '';
-            ex.steps.forEach(function(step) {
+            item.steps.forEach(function(step) {
                 var li = document.createElement('li');
                 li.textContent = step;
                 stepsList.appendChild(li);
@@ -900,20 +951,27 @@
 
         function switchTab(tab) {
             var workoutSection = document.getElementById('tabWorkout');
+            var stretchingSection = document.getElementById('tabStretching');
             var progressSection = document.getElementById('tabProgress');
             
             var navWorkout = document.getElementById('navWorkout');
+            var navStretching = document.getElementById('navStretching');
             var navProgress = document.getElementById('navProgress');
 
             workoutSection.classList.add('hidden');
+            stretchingSection.classList.add('hidden');
             progressSection.classList.add('hidden');
 
             navWorkout.className = "flex flex-col items-center space-y-1 text-brand-textMuted";
+            navStretching.className = "flex flex-col items-center space-y-1 text-brand-textMuted";
             navProgress.className = "flex flex-col items-center space-y-1 text-brand-textMuted";
 
             if (tab === 'workout') {
                 workoutSection.classList.remove('hidden');
                 navWorkout.className = "flex flex-col items-center space-y-1 text-brand-purple";
+            } else if (tab === 'stretching') {
+                stretchingSection.classList.remove('hidden');
+                navStretching.className = "flex flex-col items-center space-y-1 text-brand-purple";
             } else if (tab === 'progress') {
                 progressSection.classList.remove('hidden');
                 navProgress.className = "flex flex-col items-center space-y-1 text-brand-purple";
