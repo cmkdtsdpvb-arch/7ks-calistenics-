@@ -135,6 +135,33 @@
         </div>
     </div>
 
+    <!-- TUTORIAL / GUIA PARA NOVOS UTILIZADORES -->
+    <div id="tutorialModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-brand-card border border-brand-purple/60 rounded-3xl p-6 w-full max-w-md purple-glow space-y-4 text-center">
+            <div class="w-14 h-14 bg-brand-purple/20 border border-brand-purple rounded-2xl flex items-center justify-center mx-auto">
+                <i class="fa-solid fa-graduation-cap text-brand-purple text-2xl"></i>
+            </div>
+            <div>
+                <h3 id="tutorialTitle" class="font-display font-black text-xl text-white">Bem-vindo ao 7k's Calistenics!</h3>
+                <p id="tutorialText" class="text-xs text-brand-textMuted mt-2 leading-relaxed">
+                    Este aplicativo foi criado para gerir os seus treinos de calistenia em equipa, acompanhar o seu progresso e manter o foco nos resultados.
+                </p>
+            </div>
+
+            <div class="flex justify-center gap-1.5 py-1" id="tutorialDots">
+                <span class="w-2 h-2 rounded-full bg-brand-purple"></span>
+                <span class="w-2 h-2 rounded-full bg-white/20"></span>
+                <span class="w-2 h-2 rounded-full bg-white/20"></span>
+            </div>
+
+            <div class="flex gap-2 pt-2">
+                <button id="tutorialNextBtn" onclick="nextTutorialStep()" class="w-full bg-brand-purple hover:bg-brand-purpleDark text-white font-bold py-3 rounded-xl transition text-xs shadow-lg shadow-brand-purple/30">
+                    Avançar →
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL EXECUÇÃO -->
     <div id="exerciseModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-brand-card border border-brand-purple/40 rounded-3xl p-5 w-full max-w-md purple-glow max-h-[90vh] overflow-y-auto">
@@ -344,6 +371,23 @@
         var timerInterval = null;
         var timerTimeLeft = 60;
 
+        // SISTEMA DE TUTORIAL EM PASSOS
+        var currentTutorialStep = 0;
+        var tutorialSteps = [
+            {
+                title: "Bem-vindo ao 7k's Calistenics!",
+                text: "Este app ajuda-o a registar os seus treinos de calistenia na nuvem, acompanhar a hidratação e evoluir com os seus colegas."
+            },
+            {
+                title: "Como funcionam os Treinos",
+                text: "Na aba 'Treino', clique nas séries (S1, S2...) à medida que as concluir. Cada check ativa automaticamente um cronómetro de descanso de 1 minuto!"
+            },
+            {
+                title: "Gerar Treino com Inteligência Artificial",
+                text: "Vá até à aba 'Progresso' e clique no botão 'Gerar Treino Personalizado com IA'. A IA lerá a sua idade, peso e altura para montar uma rotina perfeita para si!"
+            }
+        ];
+
         window.addEventListener('firebaseReady', function() {
             var activeUser = localStorage.getItem('7ks_firebase_active_user');
             if (activeUser) {
@@ -403,9 +447,38 @@
                 localStorage.setItem('7ks_firebase_active_user', currentUser);
                 document.getElementById('authModal').classList.add('hidden');
                 loadFromCloud();
-                alert("Conta criada com sucesso na nuvem!");
+
+                currentTutorialStep = 0;
+                showTutorialStep();
+                document.getElementById('tutorialModal').classList.remove('hidden');
             } catch (err) {
                 alert("Erro ao criar conta: " + err.message);
+            }
+        }
+
+        function nextTutorialStep() {
+            currentTutorialStep++;
+            if (currentTutorialStep < tutorialSteps.length) {
+                showTutorialStep();
+            } else {
+                document.getElementById('tutorialModal').classList.add('hidden');
+            }
+        }
+
+        function showTutorialStep() {
+            const step = tutorialSteps[currentTutorialStep];
+            document.getElementById('tutorialTitle').textContent = step.title;
+            document.getElementById('tutorialText').textContent = step.text;
+            
+            const dots = document.getElementById('tutorialDots').children;
+            for(let i = 0; i < dots.length; i++) {
+                dots[i].className = i === currentTutorialStep ? "w-2 h-2 rounded-full bg-brand-purple" : "w-2 h-2 rounded-full bg-white/20";
+            }
+
+            if (currentTutorialStep === tutorialSteps.length - 1) {
+                document.getElementById('tutorialNextBtn').textContent = "Começar a Treinar 🚀";
+            } else {
+                document.getElementById('tutorialNextBtn').textContent = "Avançar →";
             }
         }
 
@@ -492,7 +565,7 @@
             }
         }
 
-        // FUNÇÃO DE INTEGRAÇÃO COM IA (GEMINI)
+        // INTEGRAÇÃO ROBUSTA COM IA (GEMINI VIA ENDPOINT CORRIGIDO)
         async function generateAITraining() {
             if (!userProfile) return;
             const container = document.getElementById('aiWorkoutContainer');
@@ -501,15 +574,10 @@
             container.classList.remove('hidden');
             content.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> A IA está a calcular o seu treino ideal com base na sua idade, peso e altura...';
 
-            const prompt = `Atua como um personal trainer especialista em calistenia. Um aluno com as seguintes características precisa de recomendações de treino:
-            - Idade: ${userProfile.age || 25} anos
-            - Peso: ${userProfile.weight} kg
-            - Altura: ${userProfile.height} cm
-            Gera um plano de treino de calistenia curto, direto e motivador (em português), indicando os exercícios recomendados, séries, repetições e dicas de descanso adaptadas para o perfil dele.`;
+            const prompt = `Atua como um personal trainer especialista em calistenia. Cria um plano de treino em português curto, motivador e estruturado para um aluno com: Idade: ${userProfile.age || 25} anos, Peso: ${userProfile.weight} kg, Altura: ${userProfile.height} cm. Indica exercícios, séries e repetições adequadas.`;
 
             try {
-                // Utilizando a API pública do Gemini para gerar a resposta instantaneamente
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyB1DJnppzD75_6NwjutJNIIMeQEOWtSVXk`, {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=AIzaSyB1DJnppzD75_6NwjutJNIIMeQEOWtSVXk`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -520,6 +588,8 @@
                 const data = await response.json();
                 if (data.candidates && data.candidates[0].content.parts[0].text) {
                     content.innerHTML = data.candidates[0].content.parts[0].text;
+                } else if (data.error) {
+                    content.innerHTML = "Erro da IA: " + data.error.message;
                 } else {
                     content.innerHTML = "Não foi possível gerar o treino no momento. Tente novamente mais tarde.";
                 }
