@@ -135,7 +135,7 @@
         </div>
     </div>
 
-    <!-- TUTORIAL / GUIA PARA NOVOS UTILIZADORES -->
+    <!-- TUTORIAL / GUIA DE INTRODUÇÃO (PASSO A PASSO) -->
     <div id="tutorialModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-brand-card border border-brand-purple/60 rounded-3xl p-6 w-full max-w-md purple-glow space-y-4 text-center">
             <div class="w-14 h-14 bg-brand-purple/20 border border-brand-purple rounded-2xl flex items-center justify-center mx-auto">
@@ -194,6 +194,9 @@
                 </div>
             </div>
             <div class="flex items-center space-x-2">
+                <button type="button" onclick="openTutorial()" class="text-xs bg-brand-purple/20 border border-brand-purple/40 text-brand-purpleLight font-bold px-2.5 py-1.5 rounded-lg hover:bg-brand-purple hover:text-white transition" title="Ver Guia de Introdução">
+                    <i class="fa-solid fa-circle-question"></i> Guia
+                </button>
                 <a href="estudo.html" class="text-xs bg-brand-purple text-white font-bold px-3 py-1.5 rounded-lg shadow-md shadow-brand-purple/30 hover:bg-brand-purpleDark transition">
                     Estudo
                 </a>
@@ -371,18 +374,19 @@
         var timerInterval = null;
         var timerTimeLeft = 60;
 
+        // SISTEMA DE TUTORIAL (INTRODUÇÃO)
         var currentTutorialStep = 0;
         var tutorialSteps = [
             {
                 title: "Bem-vindo ao 7k's Calistenics!",
-                text: "Este app ajuda-o a registar os seus treinos de calistenia na nuvem, acompanhar a hidratação e evoluir com os seus colegas."
+                text: "Este aplicativo foi criado para gerir os seus treinos de calistenia em equipa, registar o seu progresso na nuvem e evoluir lado a lado."
             },
             {
                 title: "Como funcionam os Treinos",
-                text: "Na aba 'Treino', clique nas séries (S1, S2...) à medida que as concluir. Cada check ativa automaticamente um cronómetro de descanso de 1 minuto!"
+                text: "Na aba 'Treino', clique nas séries (S1, S2...) à medida que as concluir. Cada check ativa automaticamente um cronómetro inteligente de descanso de 1 minuto!"
             },
             {
-                title: "Gerar Treino Personalizado",
+                title: "Gerar Treino Personalizado com IA",
                 text: "Vá até à aba 'Progresso' e clique no botão 'Gerar Treino Personalizado com IA'. O sistema analisará a sua idade, peso e altura para montar uma rotina perfeita para si!"
             }
         ];
@@ -447,12 +451,17 @@
                 document.getElementById('authModal').classList.add('hidden');
                 loadFromCloud();
 
-                currentTutorialStep = 0;
-                showTutorialStep();
-                document.getElementById('tutorialModal').classList.remove('hidden');
+                // Exibe o tutorial logo após criar conta
+                openTutorial();
             } catch (err) {
                 alert("Erro ao criar conta: " + err.message);
             }
+        }
+
+        function openTutorial() {
+            currentTutorialStep = 0;
+            showTutorialStep();
+            document.getElementById('tutorialModal').classList.remove('hidden');
         }
 
         function nextTutorialStep() {
@@ -564,7 +573,7 @@
             }
         }
 
-        // MOTOR INTELIGENTE DE TREINO PERSONALIZADO LOCAL (SEM BLOQUEIOS CORS)
+        // MOTOR DE TREINO PERSONALIZADO COM IA LOCAL
         function generateAITraining() {
             if (!userProfile) return;
             const container = document.getElementById('aiWorkoutContainer');
@@ -587,7 +596,7 @@
                     recomendacao = "Priorize flexões inclinadas e agachamentos controlados.";
                 } else if (idade < 20) {
                     intensidade = "Foco em explosão, ganho de massa muscular limpa e hipertrofia.";
-                    recomendacao = "Aumente as repetições e teste variações avançadas na barra fixadora.";
+                    recomendacao = "Aumente as repetições e teste variações avançadas na barra fixa.";
                 }
 
                 content.innerHTML = `🤖 **PLANO GERADO PARA ${userProfile.nickname.toUpperCase()}**\n\n` +
