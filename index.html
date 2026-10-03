@@ -14,7 +14,7 @@
     <!-- FIREBASE SDKs (v10) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB1DJnppzD75_6NwjutJNIIMeQEOWtSVXk",
@@ -30,7 +30,7 @@
         const db = getFirestore(app);
 
         window.db = db;
-        window.firebaseTools = { doc, setDoc, getDoc, updateDoc };
+        window.firebaseTools = { doc, setDoc, getDoc, updateDoc, deleteDoc };
         window.dispatchEvent(new Event('firebaseReady'));
     </script>
 
@@ -300,10 +300,15 @@
                             <p class="text-xs text-brand-textMuted">Desenvolvido por <a href="https://instagram.com/eufilipin7k" target="_blank" class="text-brand-purpleLight font-bold underline hover:text-white transition">@eufilipin7k</a></p>
                         </div>
                     </div>
-                    <!-- BOTÃO EDITAR PERFIL -->
-                    <button type="button" onclick="editProfile()" class="text-xs bg-brand-purple/20 border border-brand-purple/40 text-brand-purpleLight font-bold px-3 py-1.5 rounded-xl hover:bg-brand-purple hover:text-white transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-pen-to-square"></i> Editar
-                    </button>
+                    <!-- BOTÕES DE PERFIL (EDITAR E EXCLUIR CONTA) -->
+                    <div class="flex items-center space-x-2">
+                        <button type="button" onclick="editProfile()" class="text-xs bg-brand-purple/20 border border-brand-purple/40 text-brand-purpleLight font-bold px-3 py-1.5 rounded-xl hover:bg-brand-purple hover:text-white transition flex items-center gap-1.5" title="Editar Perfil">
+                            <i class="fa-solid fa-pen-to-square"></i> Editar
+                        </button>
+                        <button type="button" onclick="deleteAccount()" class="text-xs bg-red-500/20 border border-red-500/40 text-red-400 font-bold px-3 py-1.5 rounded-xl hover:bg-red-500 hover:text-white transition flex items-center gap-1.5" title="Excluir Conta">
+                            <i class="fa-solid fa-user-xmark"></i> Excluir
+                        </button>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-4 gap-2 text-center mb-4">
@@ -652,6 +657,35 @@
             updateProfileDisplay();
             await syncDataToCloud();
             alert("Perfil atualizado com sucesso!");
+        }
+
+        async function deleteAccount() {
+            if (!currentUser) return;
+            var confirmDelete = confirm("Tem a certeza absoluta de que deseja excluir a sua conta e todos os dados salvos na nuvem? Esta ação é irreversível!");
+            if (!confirmDelete) return;
+
+            var passConfirm = prompt("Digite a sua palavra-passe para confirmar a exclusão:");
+            if (passConfirm === null) return;
+
+            try {
+                const docRef = window.firebaseTools.doc(window.db, "usuarios", currentUser);
+                const docSnap = await window.firebaseTools.getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    var userData = docSnap.data();
+                    if (userData.password !== passConfirm) {
+                        alert("Palavra-passe incorreta! Exclusão cancelada.");
+                        return;
+                    }
+                }
+
+                await window.firebaseTools.deleteDoc(docRef);
+                localStorage.removeItem('7ks_firebase_active_user');
+                alert("Conta excluída com sucesso!");
+                location.reload();
+            } catch (err) {
+                alert("Erro ao excluir conta: " + err.message);
+            }
         }
 
         function logout() {
