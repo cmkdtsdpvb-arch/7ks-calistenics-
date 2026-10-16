@@ -65,6 +65,9 @@
         .purple-glow {
             box-shadow: 0 0 20px rgba(139, 92, 246, 0.25);
         }
+        .shield-glow {
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.3);
+        }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #0A0A0C; }
         ::-webkit-scrollbar-thumb { background: #2D2D38; border-radius: 4px; }
@@ -287,7 +290,41 @@
             </div>
         </section>
 
-        <!-- ABA 3: PROGRESSO / HISTÓRICO / IA -->
+        <!-- ABA 3: FOCO / CONTROLO MENTAL (DISCRETA) -->
+        <section id="tabFocus" class="space-y-4 hidden">
+            <div class="bg-brand-card border border-emerald-500/30 rounded-2xl p-5 text-center space-y-4 shield-glow relative overflow-hidden">
+                <div class="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center mx-auto text-emerald-400 text-2xl">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>
+                    <span class="inline-block px-3 py-1 rounded-full text-[10px] font-extrabold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 mb-2 uppercase tracking-wider">Mente Forte</span>
+                    <h2 class="text-xl font-display font-black text-white">Controlo & Foco Diário</h2>
+                    <p class="text-xs text-brand-textMuted mt-1">Domina a tua mente um dia de cada vez.</p>
+                </div>
+
+                <!-- CAMPO DE ANOTAÇÕES -->
+                <div class="text-left space-y-1">
+                    <label class="block text-[10px] font-semibold uppercase tracking-wider text-brand-textMuted">Pensamento ou Reflexão do Dia:</label>
+                    <textarea id="focusNoteInput" rows="3" placeholder="Escreve aqui como te sentes ou o que fizeste hoje para manter o foco..." class="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-emerald-500 transition resize-none"></textarea>
+                </div>
+
+                <!-- BOTÃO GRANDE "MAIS UM DIA" -->
+                <button type="button" onclick="recordFocusDay()" class="w-full py-5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 active:scale-95 text-white font-display font-black text-lg tracking-wider shadow-lg shadow-emerald-500/30 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-fire text-yellow-300"></i> MAIS UM DIA
+                </button>
+            </div>
+
+            <!-- REGISTOS DE FOCO -->
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-display font-bold text-sm text-white">Histórico de Foco</h3>
+                    <span id="focusCountDisplay" class="text-xs font-semibold text-emerald-400">0 dias marcados</span>
+                </div>
+                <div id="focusHistoryList" class="space-y-2"></div>
+            </div>
+        </section>
+
+        <!-- ABA 4: PROGRESSO / HISTÓRICO / IA -->
         <section id="tabProgress" class="space-y-4 hidden">
             <div class="bg-brand-card border border-white/10 rounded-2xl p-4 relative overflow-hidden">
                 <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-3">
@@ -382,6 +419,10 @@
                 <i class="fa-solid fa-child-reaching text-base"></i>
                 <span class="text-[10px] font-bold">Alongamento</span>
             </button>
+            <button type="button" onclick="switchTab('focus')" id="navFocus" class="flex flex-col items-center space-y-1 text-brand-textMuted">
+                <i class="fa-solid fa-shield-halved text-base"></i>
+                <span class="text-[10px] font-bold">Foco</span>
+            </button>
             <button type="button" onclick="switchTab('progress')" id="navProgress" class="flex flex-col items-center space-y-1 text-brand-textMuted">
                 <i class="fa-solid fa-chart-line text-base"></i>
                 <span class="text-[10px] font-bold">Progresso</span>
@@ -456,6 +497,7 @@
         var completedSets = {};
         var waterMl = 0;
         var workoutHistory = [];
+        var focusHistory = [];
 
         var timerInterval = null;
         var timerTimeLeft = 60;
@@ -471,8 +513,8 @@
                 text: "Na aba 'Treino', clique nas séries (S1, S2...) à medida que as concluir. Cada check ativa automaticamente um cronómetro inteligente de descanso de 1 minuto!"
             },
             {
-                title: "Área de Alongamento e IA",
-                text: "Use a aba 'Alongamento' para flexibilidade e a aba 'Progresso' para gerar treinos personalizados com IA baseados no seu peso e altura."
+                title: "Área de Foco e IA",
+                text: "Use a aba 'Foco' para registar cada dia de superação pessoal e a aba 'Progresso' para ver o seu histórico ou gerar treinos com IA."
             }
         ];
 
@@ -529,7 +571,8 @@
                     profile: { nickname: nick, age: age, weight: weight, height: height },
                     completedSets: {},
                     waterMl: 0,
-                    history: []
+                    history: [],
+                    focusHistory: []
                 });
 
                 currentUser = nick;
@@ -617,6 +660,7 @@
                     completedSets = userData.completedSets || {};
                     waterMl = userData.waterMl || 0;
                     workoutHistory = userData.history || [];
+                    focusHistory = userData.focusHistory || [];
 
                     updateProfileDisplay();
                     renderExercises();
@@ -624,6 +668,7 @@
                     updateProgress();
                     updateWaterDisplay();
                     renderHistory();
+                    renderFocusHistory();
                 }
             } catch (e) {}
         }
@@ -636,7 +681,8 @@
                     profile: userProfile,
                     completedSets: completedSets,
                     waterMl: waterMl,
-                    history: workoutHistory
+                    history: workoutHistory,
+                    focusHistory: focusHistory
                 });
             } catch (e) {}
         }
@@ -685,6 +731,93 @@
                 location.reload();
             } catch (err) {
                 alert("Erro ao excluir conta: " + err.message);
+            }
+        }
+
+        /* LÓGICA DA ABA DE FOCO / SUPERAÇÃO */
+        function recordFocusDay() {
+            var noteInput = document.getElementById('focusNoteInput');
+            var noteText = noteInput.value.trim();
+
+            var now = new Date();
+            var dateStr = now.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            var timeStr = now.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+
+            var focusItem = {
+                id: Date.now(),
+                date: dateStr,
+                time: timeStr,
+                note: noteText
+            };
+
+            focusHistory.unshift(focusItem);
+            noteInput.value = '';
+
+            renderFocusHistory();
+            syncDataToCloud();
+            alert("🔥 Mais um dia vitorioso registado na nuvem! Continua firme.");
+        }
+
+        function renderFocusHistory() {
+            var container = document.getElementById('focusHistoryList');
+            document.getElementById('focusCountDisplay').textContent = `${focusHistory.length} dias salvos`;
+
+            if (focusHistory.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-brand-card border border-white/5 rounded-2xl p-5 text-center text-brand-textMuted">
+                        <i class="fa-solid fa-shield text-2xl mb-2 text-emerald-400"></i>
+                        <p class="text-xs">Nenhum dia registado ainda. Clica em "MAIS UM DIA" para guardar o teu progresso!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            focusHistory.forEach(function(item) {
+                var card = document.createElement('div');
+                card.className = "bg-brand-card border border-emerald-500/20 rounded-2xl p-3.5 space-y-2";
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center border-b border-white/5 pb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span class="text-xs font-bold text-emerald-400">${item.date}</span>
+                            <span class="text-[10px] text-brand-textMuted">${item.time}</span>
+                        </div>
+                        <button type="button" onclick="deleteFocusItem(${item.id})" class="text-brand-textMuted hover:text-red-400 text-xs" title="Apagar">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                    ${item.note ? `
+                        <p class="text-xs text-gray-300 leading-relaxed bg-black/40 p-2 rounded-xl border border-white/5">
+                            <i class="fa-solid fa-quote-left text-[10px] text-emerald-400 mr-1"></i> ${item.note}
+                        </p>
+                    ` : '<p class="text-[11px] text-brand-textMuted italic">Sem anotações para este dia.</p>'}
+                    <button type="button" onclick="editFocusNote(${item.id})" class="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
+                        <i class="fa-solid fa-pen"></i> ${item.note ? 'Editar Anotação' : '+ Adicionar Anotação'}
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function editFocusNote(id) {
+            var item = focusHistory.find(h => h.id === id);
+            if (!item) return;
+
+            var newNote = prompt("Edita a tua reflexão para este dia:", item.note || "");
+            if (newNote !== null) {
+                item.note = newNote.trim();
+                renderFocusHistory();
+                syncDataToCloud();
+            }
+        }
+
+        function deleteFocusItem(id) {
+            if (confirm("Apagar este registo de dia?")) {
+                focusHistory = focusHistory.filter(h => h.id !== id);
+                renderFocusHistory();
+                syncDataToCloud();
             }
         }
 
@@ -1041,18 +1174,22 @@
         function switchTab(tab) {
             var workoutSection = document.getElementById('tabWorkout');
             var stretchingSection = document.getElementById('tabStretching');
+            var focusSection = document.getElementById('tabFocus');
             var progressSection = document.getElementById('tabProgress');
             
             var navWorkout = document.getElementById('navWorkout');
             var navStretching = document.getElementById('navStretching');
+            var navFocus = document.getElementById('navFocus');
             var navProgress = document.getElementById('navProgress');
 
             workoutSection.classList.add('hidden');
             stretchingSection.classList.add('hidden');
+            focusSection.classList.add('hidden');
             progressSection.classList.add('hidden');
 
             navWorkout.className = "flex flex-col items-center space-y-1 text-brand-textMuted";
             navStretching.className = "flex flex-col items-center space-y-1 text-brand-textMuted";
+            navFocus.className = "flex flex-col items-center space-y-1 text-brand-textMuted";
             navProgress.className = "flex flex-col items-center space-y-1 text-brand-textMuted";
 
             if (tab === 'workout') {
@@ -1061,6 +1198,9 @@
             } else if (tab === 'stretching') {
                 stretchingSection.classList.remove('hidden');
                 navStretching.className = "flex flex-col items-center space-y-1 text-brand-purple";
+            } else if (tab === 'focus') {
+                focusSection.classList.remove('hidden');
+                navFocus.className = "flex flex-col items-center space-y-1 text-emerald-400";
             } else if (tab === 'progress') {
                 progressSection.classList.remove('hidden');
                 navProgress.className = "flex flex-col items-center space-y-1 text-brand-purple";
