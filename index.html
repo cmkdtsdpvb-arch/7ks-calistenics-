@@ -302,6 +302,23 @@
                     <p class="text-xs text-brand-textMuted mt-1">Domina a tua mente um dia de cada vez.</p>
                 </div>
 
+                <!-- CARD DE LEMBRETE POR NOTIFICAÇÃO DO CELULAR -->
+                <div class="bg-black/50 border border-emerald-500/20 rounded-xl p-3.5 text-left space-y-2">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-solid fa-bell text-emerald-400 text-sm"></i>
+                            <span class="text-xs font-bold text-white">Lembrete Diário de Notificação</span>
+                        </div>
+                        <button type="button" id="toggleReminderBtn" onclick="toggleReminder()" class="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-white/10 text-brand-textMuted border border-white/10 transition">
+                            Desativado
+                        </button>
+                    </div>
+                    <div id="reminderTimeContainer" class="flex items-center justify-between pt-1 hidden">
+                        <span class="text-[11px] text-brand-textMuted">Horário do lembrete:</span>
+                        <input type="time" id="reminderTimeInput" value="20:00" onchange="updateReminderTime()" class="bg-black border border-white/10 rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-emerald-400">
+                    </div>
+                </div>
+
                 <!-- CAMPO DE ANOTAÇÕES -->
                 <div class="text-left space-y-1">
                     <label class="block text-[10px] font-semibold uppercase tracking-wider text-brand-textMuted">Pensamento ou Reflexão do Dia:</label>
@@ -463,7 +480,7 @@
                 id: 'along_quadriceps', 
                 name: '2. Alongamento de Quadríceps', 
                 duration: '20 a 30 seg por perna', 
-                targets: 'Parte da frente da coxa (quadriceps) e flexores do quadril.', 
+                targets: 'Parte da frente da coxa (quadríceps) e flexores do quadril.', 
                 img: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=600&auto=format&fit=crop', 
                 videoUrl: 'https://www.youtube.com/embed/aclHkVaku9U', 
                 steps: ['Fique em pé (apoiando-se em uma parede se precisar de equilíbrio).', 'Dobre um joelho, levando o calcanhar em direção aos glúteos, e segure o pé com a mão do mesmo lado.', 'Mantenha os joelhos alinhados lado a lado.'] 
@@ -504,6 +521,10 @@
         var workoutHistory = [];
         var focusHistory = [];
 
+        var reminderActive = false;
+        var reminderTime = "20:00";
+        var reminderCheckInterval = null;
+
         var timerInterval = null;
         var timerTimeLeft = 60;
 
@@ -519,7 +540,7 @@
             },
             {
                 title: "Área de Foco e IA",
-                text: "Use a aba 'Foco' para registar cada dia de superação pessoal e a aba 'Progresso' para ver o seu histórico ou gerar treinos com IA."
+                text: "Use a aba 'Foco' para registar cada dia de superação pessoal e ativar lembretes no telemóvel. Use a aba 'Progresso' para ver o histórico ou gerar treinos com IA."
             }
         ];
 
@@ -533,6 +554,7 @@
             }
             renderExercises();
             renderStretching();
+            initReminderSystem();
         });
 
         function switchAuthTab(tab) {
@@ -577,7 +599,9 @@
                     completedSets: {},
                     waterMl: 0,
                     history: [],
-                    focusHistory: []
+                    focusHistory: [],
+                    reminderActive: false,
+                    reminderTime: "20:00"
                 });
 
                 currentUser = nick;
@@ -666,6 +690,9 @@
                     waterMl = userData.waterMl || 0;
                     workoutHistory = userData.history || [];
                     focusHistory = userData.focusHistory || [];
+                    
+                    reminderActive = userData.reminderActive || false;
+                    reminderTime = userData.reminderTime || "20:00";
 
                     updateProfileDisplay();
                     renderExercises();
@@ -674,6 +701,7 @@
                     updateWaterDisplay();
                     renderHistory();
                     renderFocusHistory();
+                    updateReminderUI();
                 }
             } catch (e) {}
         }
@@ -687,7 +715,9 @@
                     completedSets: completedSets,
                     waterMl: waterMl,
                     history: workoutHistory,
-                    focusHistory: focusHistory
+                    focusHistory: focusHistory,
+                    reminderActive: reminderActive,
+                    reminderTime: reminderTime
                 });
             } catch (e) {}
         }
@@ -736,6 +766,84 @@
                 location.reload();
             } catch (err) {
                 alert("Erro ao excluir conta: " + err.message);
+            }
+        }
+
+        /* LÓGICA DO SISTEMA DE NOTIFICAÇÕES / LEMBRETE DA ABA FOCO */
+        function toggleReminder() {
+            if (!("Notification" in window)) {
+                alert("O seu navegador/telemóvel não suporta notificações do sistema.");
+                return;
+            }
+
+            if (!reminderActive) {
+                Notification.requestPermission().then(function(permission) {
+                    if (permission === "granted") {
+                        reminderActive = true;
+                        updateReminderUI();
+                        syncDataToCloud();
+                        sendNotification("Lembrete Ativado! 🛡️", "Receberá um alerta diário para manter o seu foco.");
+                    } else {
+                        alert("A permissão para enviar notificações foi negada nas definições do seu navegador.");
+                    }
+                });
+            } else {
+                reminderActive = false;
+                updateReminderUI();
+                syncDataToCloud();
+            }
+        }
+
+        function updateReminderTime() {
+            var timeInput = document.getElementById('reminderTimeInput');
+            if (timeInput && timeInput.value) {
+                reminderTime = timeInput.value;
+                syncDataToCloud();
+            }
+        }
+
+        function updateReminderUI() {
+            var btn = document.getElementById('toggleReminderBtn');
+            var container = document.getElementById('reminderTimeContainer');
+            var timeInput = document.getElementById('reminderTimeInput');
+
+            if (!btn || !container) return;
+
+            if (reminderActive) {
+                btn.textContent = "Ativado 🔔";
+                btn.className = "text-[10px] font-bold px-2.5 py-1 rounded-lg bg-emerald-500 text-white border border-emerald-400 shadow-md shadow-emerald-500/20 transition";
+                container.classList.remove('hidden');
+                if (timeInput) timeInput.value = reminderTime;
+            } else {
+                btn.textContent = "Desativado";
+                btn.className = "text-[10px] font-bold px-2.5 py-1 rounded-lg bg-white/10 text-brand-textMuted border border-white/10 transition";
+                container.classList.add('hidden');
+            }
+        }
+
+        function initReminderSystem() {
+            if (reminderCheckInterval) clearInterval(reminderCheckInterval);
+
+            reminderCheckInterval = setInterval(function() {
+                if (!reminderActive) return;
+
+                var now = new Date();
+                var currentHM = String(now.getHours()).padStart(2, '0') + ":" + String(now.getMinutes()).padStart(2, '0');
+
+                if (currentHM === reminderTime && now.getSeconds() === 0) {
+                    sendNotification("🛡️ Hora do Foco & Mente Forte!", "Lembra-te do teu objetivo de hoje. Entra no app e clica em 'MAIS UM DIA'!");
+                }
+            }, 1000);
+        }
+
+        function sendNotification(title, body) {
+            if ("Notification" in window && Notification.permission === "granted") {
+                try {
+                    new Notification(title, {
+                        body: body,
+                        icon: "https://cdn-icons-png.flaticon.com/512/2964/2964514.png"
+                    });
+                } catch (e) {}
             }
         }
 
