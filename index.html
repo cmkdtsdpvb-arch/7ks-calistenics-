@@ -478,7 +478,8 @@
             { id: 'flexoes', name: 'Flexões', meta: '5×10 (50 repetições)', sets: 5, targets: 'Peitoral, tríceps, ombros e core.', img: 'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/iod3sACpL4w', steps: ['Mãos na largura dos ombros.', 'Corpo reto.', 'Desça até quase tocar o chão.', 'Empurre de volta.'] },
             { id: 'barra_fixa', name: 'Barra Fixa', meta: '5×5 (25 repetições)', sets: 5, targets: 'Costas, bíceps e antebraços.', img: 'https://images.unsplash.com/photo-1598971457999-ca4ef48a9a71?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/eGo4IYlbE5g', steps: ['Pegada pronada.', 'Puxe até passar o queixo.', 'Desça devagar.'] },
             { id: 'barra_australiana', name: 'Barra Australiana', meta: '5×5 (25 repetições)', sets: 5, targets: 'Costas médias e bíceps.', img: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/G2eJ-A_xPUI', steps: ['Corpo inclinado.', 'Puxe o peito à barra.', 'Retorne devagar.'] },
-            { id: 'abdominais', name: 'Abdominais', meta: '5×5 (25 repetições)', sets: 5, targets: 'Reto abdominal.', img: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/Xyd_fa5zoEU', steps: ['Deite-se com joelhos dobrados.', 'Suba o tronco contraindo o abdômen.'] },
+            { id: 'abdominal_supra', name: 'Abdominal Supra', meta: '5×20 (100 repetições)', sets: 5, targets: 'Parte superior do reto abdominal.', img: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/Xyd_fa5zoEU', steps: ['Deite-se de costas com os joelhos flexionados e pés apoiados no chão.', 'Coloque as mãos levemente atrás da cabeça ou cruzadas no peito.', 'Eleve apenas os ombros e a parte superior das costas do chão contraindo o abdômen.', 'Retorne controlando o movimento sem encostar totalmente a cabeça no chão.'] },
+            { id: 'abdominal_infra', name: 'Abdominal Infra', meta: '5×20 (100 repetições)', sets: 5, targets: 'Parte inferior do abdômen e core.', img: 'https://images.unsplash.com/photo-1566241142559-40e1dab266c6?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/pSHjTRCQxIw', steps: ['Deite-se de costas com os braços estendidos ao lado do corpo ou sob os glúteos para apoio.', 'Eleve as pernas estendidas ou levemente flexionadas em direção ao teto.', 'Desça as pernas controlando o movimento, sem deixar a lombar arquear ou descolar do chão.', 'Suba novamente contraindo a parte inferior do abdômen.'] },
             { id: 'prancha', name: 'Prancha', meta: '3 a 5 séries de 30–60s', sets: 5, targets: 'Core completo.', img: 'https://images.unsplash.com/photo-1566241142559-40e1dab266c6?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/pSHjTRCQxIw', steps: ['Apoie antebraços.', 'Mantenha o corpo alinhado.'] },
             { id: 'agachamentos', name: 'Agachamentos', meta: '5×10 (50 repetições)', sets: 5, targets: 'Pernas e glúteos.', img: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/aclHkVaku9U', steps: ['Pés na largura dos ombros.', 'Agache até 90 graus.', 'Suba firme.'] },
             { id: 'calcanhar', name: 'Levantamento de Calcanhar', meta: '5×10 (50 repetições)', sets: 5, targets: 'Panturrilhas.', img: 'https://images.unsplash.com/photo-1434682881908-b43d0467b798?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/gwLzBJYoWlI', steps: ['Suba na ponta dos pés.', 'Segure 1s no topo e desça.'] },
@@ -788,7 +789,6 @@
             }
         }
 
-        /* LÓGICA DO ALERTA DE LEMBRETE INTERNO (FUNCIONA EM QUALQUER CELULAR/IPHONE) */
         function toggleReminder() {
             reminderActive = !reminderActive;
             updateReminderUI();
@@ -850,7 +850,6 @@
             document.getElementById('reminderAlertModal').classList.add('hidden');
         }
 
-        /* LÓGICA DA ABA DE FOCO / SUPERAÇÃO */
         function recordFocusDay() {
             var noteInput = document.getElementById('focusNoteInput');
             var noteText = noteInput.value.trim();
