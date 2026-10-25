@@ -75,7 +75,7 @@
 </head>
 <body class="font-sans antialiased bg-brand-black text-white min-h-screen pb-24 select-none">
 
-    <!-- MODAL DE ALERTA DE LEMBRETE (INTERNO & INCONFUNDÍVEL) -->
+    <!-- MODAL DE ALERTA DE LEMBRETE -->
     <div id="reminderAlertModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-brand-card border border-emerald-500 rounded-3xl p-6 w-full max-w-md shield-glow text-center space-y-4">
             <div class="w-16 h-16 bg-emerald-500/20 border border-emerald-500 rounded-2xl flex items-center justify-center mx-auto text-emerald-400 text-2xl animate-bounce">
@@ -232,13 +232,14 @@
     <!-- CONTEÚDO PRINCIPAL -->
     <main class="max-w-md mx-auto px-4 pt-4">
 
-        <!-- ABA 1: TREINO PADRÃO -->
+        <!-- ABA 1: CIRCUITO DE ABDÔMEN -->
         <section id="tabWorkout" class="space-y-4">
             <div class="bg-brand-card border border-white/10 rounded-2xl p-4 relative overflow-hidden">
                 <div class="flex justify-between items-start mb-2">
                     <div>
-                        <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-brand-purple/20 text-brand-purpleLight border border-brand-purple/30 mb-1">TREINO BASE</span>
-                        <h2 class="text-xl font-display font-extrabold text-white">Treino Básico Calistenia</h2>
+                        <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-brand-purple/20 text-brand-purpleLight border border-brand-purple/30 mb-1">CIRCUITO DE ABDÔMEN</span>
+                        <h2 class="text-xl font-display font-extrabold text-white">Treino de Abdômen em Casa</h2>
+                        <p class="text-[11px] text-brand-textMuted mt-1">Faça todos em sequência sem descanso. Ao finalizar, descanse 1 minuto e repita de 3 a 5 vezes.</p>
                     </div>
                     <button type="button" onclick="resetWorkout()" class="text-brand-textMuted hover:text-red-400 text-xs flex items-center gap-1 bg-black/40 px-2.5 py-1.5 rounded-lg border border-white/5">
                         <i class="fa-solid fa-rotate-right"></i> Reset
@@ -247,7 +248,7 @@
 
                 <div class="mt-3">
                     <div class="flex justify-between text-xs mb-1 font-semibold">
-                        <span class="text-brand-textMuted">Progresso do Treino</span>
+                        <span class="text-brand-textMuted">Progresso do Circuito</span>
                         <span id="progressText" class="text-brand-purpleLight font-bold">0%</span>
                     </div>
                     <div class="w-full bg-black/60 rounded-full h-2.5 border border-white/5 p-0.5">
@@ -274,12 +275,12 @@
                 </div>
             </div>
 
-            <!-- EXERCÍCIOS PADRÃO -->
+            <!-- EXERCÍCIOS DO CIRCUITO -->
             <div id="exerciseList" class="space-y-4"></div>
 
             <div class="pt-2 pb-6">
                 <button type="button" onclick="finishWorkout()" class="w-full bg-gradient-to-r from-brand-purpleDark to-brand-purple hover:opacity-90 active:scale-95 text-white font-display font-bold py-4 rounded-2xl transition shadow-lg shadow-brand-purple/25 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-check-double text-lg"></i> FINALIZAR & SALVAR TREINO
+                    <i class="fa-solid fa-check-double text-lg"></i> FINALIZAR & SALVAR CIRCUITO
                 </button>
             </div>
         </section>
@@ -309,7 +310,7 @@
             </div>
         </section>
 
-        <!-- ABA 3: FOCO / CONTROLO MENTAL (DISCRETA) -->
+        <!-- ABA 3: FOCO / CONTROLO MENTAL -->
         <section id="tabFocus" class="space-y-4 hidden">
             <div class="bg-brand-card border border-emerald-500/30 rounded-2xl p-5 text-center space-y-4 shield-glow relative overflow-hidden">
                 <div class="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center mx-auto text-emerald-400 text-2xl">
@@ -475,15 +476,51 @@
 
     <script>
         var exercises = [
-            { id: 'flexoes', name: 'Flexões', meta: '5×10 (50 repetições)', sets: 5, targets: 'Peitoral, tríceps, ombros e core.', img: 'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/iod3sACpL4w', steps: ['Mãos na largura dos ombros.', 'Corpo reto.', 'Desça até quase tocar o chão.', 'Empurre de volta.'] },
-            { id: 'barra_fixa', name: 'Barra Fixa', meta: '5×5 (25 repetições)', sets: 5, targets: 'Costas, bíceps e antebraços.', img: 'https://images.unsplash.com/photo-1598971457999-ca4ef48a9a71?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/eGo4IYlbE5g', steps: ['Pegada pronada.', 'Puxe até passar o queixo.', 'Desça devagar.'] },
-            { id: 'barra_australiana', name: 'Barra Australiana', meta: '5×5 (25 repetições)', sets: 5, targets: 'Costas médias e bíceps.', img: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/G2eJ-A_xPUI', steps: ['Corpo inclinado.', 'Puxe o peito à barra.', 'Retorne devagar.'] },
-            { id: 'abdominal_supra', name: 'Abdominal Supra', meta: '5×20 (100 repetições)', sets: 5, targets: 'Parte superior do reto abdominal.', img: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/Xyd_fa5zoEU', steps: ['Deite-se de costas com os joelhos flexionados e pés apoiados no chão.', 'Coloque as mãos levemente atrás da cabeça ou cruzadas no peito.', 'Eleve apenas os ombros e a parte superior das costas do chão contraindo o abdômen.', 'Retorne controlando o movimento sem encostar totalmente a cabeça no chão.'] },
-            { id: 'abdominal_infra', name: 'Abdominal Infra', meta: '5×20 (100 repetições)', sets: 5, targets: 'Parte inferior do abdômen e core.', img: 'https://images.unsplash.com/photo-1566241142559-40e1dab266c6?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/pSHjTRCQxIw', steps: ['Deite-se de costas com os braços estendidos ao lado do corpo ou sob os glúteos para apoio.', 'Eleve as pernas estendidas ou levemente flexionadas em direção ao teto.', 'Desça as pernas controlando o movimento, sem deixar a lombar arquear ou descolar do chão.', 'Suba novamente contraindo a parte inferior do abdômen.'] },
-            { id: 'prancha', name: 'Prancha', meta: '3 a 5 séries de 30–60s', sets: 5, targets: 'Core completo.', img: 'https://images.unsplash.com/photo-1566241142559-40e1dab266c6?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/pSHjTRCQxIw', steps: ['Apoie antebraços.', 'Mantenha o corpo alinhado.'] },
-            { id: 'agachamentos', name: 'Agachamentos', meta: '5×10 (50 repetições)', sets: 5, targets: 'Pernas e glúteos.', img: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/aclHkVaku9U', steps: ['Pés na largura dos ombros.', 'Agache até 90 graus.', 'Suba firme.'] },
-            { id: 'calcanhar', name: 'Levantamento de Calcanhar', meta: '5×10 (50 repetições)', sets: 5, targets: 'Panturrilhas.', img: 'https://images.unsplash.com/photo-1434682881908-b43d0467b798?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/gwLzBJYoWlI', steps: ['Suba na ponta dos pés.', 'Segure 1s no topo e desça.'] },
-            { id: 'elevacao_lateral', name: 'Elevação Lateral', meta: '5×5 (25 repetições)', sets: 5, targets: 'Ombros.', img: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=600&auto=format&fit=crop', videoUrl: 'https://www.youtube.com/embed/3VcKaXpzqRo', steps: ['Eleve os braços até à altura dos ombros.', 'Desça controlando.'] }
+            { 
+                id: 'abdominal_supra', 
+                name: '1. Abdominal Supra', 
+                meta: '10 a 15 repetições', 
+                sets: 5, 
+                targets: 'Região superior do reto abdominal.', 
+                img: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=600&auto=format&fit=crop', 
+                videoUrl: 'https://www.youtube.com/embed/4WUGKK3EvIE', 
+                steps: [
+                    'Deite-se de costas no colchonete.',
+                    'Mantenha as pernas flexionadas e elevadas a 90 graus no ar.',
+                    'Coloque as mãos ao lado da cabeça.',
+                    'Flexione a parte superior do tronco aproximando os cotovelos dos joelhos e contraindo o abdômen.'
+                ] 
+            },
+            { 
+                id: 'abdominal_infra', 
+                name: '2. Abdominal Infra', 
+                meta: '10 a 15 repetições', 
+                sets: 5, 
+                targets: 'Região inferior do reto abdominal e flexores do quadril.', 
+                img: 'https://images.unsplash.com/photo-1566241142559-40e1dab266c6?q=80&w=600&auto=format&fit=crop', 
+                videoUrl: 'https://www.youtube.com/embed/4WUGKK3EvIE', 
+                steps: [
+                    'Deite-se de costas com os braços estendidos e mãos apoiadas no chão ao lado do corpo.',
+                    'Estenda as pernas perto do chão na posição inicial.',
+                    'Eleve as pernas flexionando os joelhos e trazendo o quadril levemente para cima no final.',
+                    'Retorne controlando até quase encostar os pés no chão.'
+                ] 
+            },
+            { 
+                id: 'canoinha', 
+                name: '3. Canoinha (Hollow Hold)', 
+                meta: 'Máximo tempo possível', 
+                sets: 5, 
+                targets: 'Fortalecimento isométrico do core completo.', 
+                img: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=600&auto=format&fit=crop', 
+                videoUrl: 'https://www.youtube.com/embed/4WUGKK3EvIE', 
+                steps: [
+                    'Deite-se de costas no colchonete.',
+                    'Mantenha a lombar completamente colada no chão.',
+                    'Eleve as pernas estendidas a poucos centímetros do chão.',
+                    'Eleve os ombros do chão e estenda os braços para a frente ou ao lado do corpo, segurando a posição em isometria.'
+                ] 
+            }
         ];
 
         var stretching = [
@@ -979,24 +1016,23 @@
                 const imc = (peso / ((altura/100)*(altura/100))).toFixed(1);
 
                 let intensidade = "Foco em progressão de força e resistência.";
-                let recomendacao = "4 séries de cada exercício base com 60s de descanso.";
+                let recomendacao = "Realize o circuito 4 vezes seguidas com 1 min de descanso.";
 
                 if (imc > 25) {
                     intensidade = "Foco em queima de gordura e adaptação articular para maior peso corporal.";
-                    recomendacao = "Priorize flexões inclinadas e agachamentos controlados.";
+                    recomendacao = "Priorize a execução perfeita do Abdominal Supra e reduza o tempo de Canoinha se necessário.";
                 } else if (idade < 20) {
                     intensidade = "Foco em explosão, ganho de massa muscular limpa e hipertrofia.";
-                    recomendacao = "Aumente as repetições e teste variações avançadas na barra fixa.";
+                    recomendacao = "Aumente para 15 repetições em cada exercício e tente segurar a canoinha por 45s.";
                 }
 
                 content.innerHTML = `🤖 **PLANO GERADO PARA ${userProfile.nickname.toUpperCase()}**\n\n` +
                     `📊 **Perfil:** ${idade} anos | ${peso}kg | ${altura}cm | IMC: ${imc}\n` +
                     `💡 **Estratégia:** ${intensidade}\n\n` +
-                    `🏋️‍♂️ **Rotina Recomendada:**\n` +
-                    `1. **Flexões no Solo:** 4 séries de 12 a 15 repetições\n` +
-                    `2. **Barra Fixa / Australiana:** 4 séries de 6 a 8 repetições\n` +
-                    `3. **Agachamento Livre:** 4 séries de 15 repetições\n` +
-                    `4. **Prancha abdominal:** 3 séries de 45 segundos\n\n` +
+                    `🏋️‍♂️ **Circuito Recomendado:**\n` +
+                    `1. **Abdominal Supra:** 10 a 15 repetições\n` +
+                    `2. **Abdominal Infra:** 10 a 15 repetições\n` +
+                    `3. **Canoinha (Hollow Hold):** Máximo de tempo possível\n\n` +
                     `⏱️ **Dica do Treinador:** ${recomendacao}`;
             }, 800);
         }
